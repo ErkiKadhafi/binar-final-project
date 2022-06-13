@@ -7,17 +7,17 @@ module.exports = {
         extend: {
             colors: {
                 primary: {
-                    purple05: "#4B1979",
-                    purple04: "#7126B5",
-                    purple03: "#A06ECE",
-                    purple02: "#D0B7E6",
-                    purple01: "#E2D4F0",
+                    darkblue05: "#4B1979",
+                    darkblue04: "#7126B5",
+                    darkblue03: "#A06ECE",
+                    darkblue02: "#D0B7E6",
+                    darkblue01: "#E2D4F0",
 
-                    cream05: "#AA9B87",
-                    cream04: "#D4C2A8",
-                    cream03: "#FFE9CA",
-                    cream02: "#FFF0DC",
-                    cream01: "#FFF8ED"
+                    limegreen05: "#AA9B87",
+                    limegreen04: "#D4C2A8",
+                    limegreen03: "#FFE9CA",
+                    limegreen02: "#FFF0DC",
+                    limegreen01: "#FFF8ED"
 
                 },
                 allert: {
