@@ -17,23 +17,38 @@ module.exports = {
                     limegreen04: "#D4C2A8",
                     limegreen03: "#FFE9CA",
                     limegreen02: "#FFF0DC",
-                    limegreen01: "#FFF8ED"
-
+                    limegreen01: "#FFF8ED",
                 },
-                allert: {
+                alert: {
                     danger: "#FA2C5A",
                     warning: "#F9CC00",
-                    succes: "#73CA5C"
+                    succes: "#73CA5C",
                 },
-                neutral:{
+                neutral: {
                     neutral05: "#151515",
                     neutral04: "#3C3C3C",
                     neutral03: "#8A8A8A",
                     neutral02: "#D0D0D0",
-                    neutral01: "#FFFFFF"
+                    neutral01: "#FFFFFF",
                 },
+            },
+            boxShadow: {
+                low: "0px 0px 4px rgba(0, 0, 0, 0.15)",
+                high: "0px 0px 10px rgba(0, 0, 0, 0.15)",
+            },
+            borderRadius: {
+                "20px": "20px",
+            },
+            lineHeight: {
+                "56px": "56px",
+            },
+            spacing: {
+                "116px": "116px",
+                "118px": "118px",
             },
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/forms'),
+    ],
 };
