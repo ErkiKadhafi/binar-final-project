@@ -18,6 +18,9 @@
 }
 
 @media screen and (max-width: 768px) {
+    .banner-login{
+        display: none;
+    }
     .container-banner {
         max-width: 73rem; /* 1168px */
         width: 90%;
