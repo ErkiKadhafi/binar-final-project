@@ -1,8 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import Input from "../components/Input";
-import Select from "../components/Select";
-import Button from "../components/Button";
+import { Link } from "react-router-dom";
 
 // prettier-ignore
 const SvgSearch = ({ fill="stroke-black"}) => (
@@ -139,25 +137,27 @@ const Home = () => {
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {[...Array(20)].map((item, index) => {
                         return (
-                            <div
-                                key={index}
-                                className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition"
-                            >
-                                <div className="mb-2">
-                                    <img
-                                        src="/images/watch.png"
-                                        className="h-full w-full object-cover"
-                                        alt={index}
-                                    />
+                            <Link to={`/product/${index}`}>
+                                <div
+                                    key={index}
+                                    className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition"
+                                >
+                                    <div className="mb-2">
+                                        <img
+                                            src="/images/watch.png"
+                                            className="h-full w-full object-cover"
+                                            alt={index}
+                                        />
+                                    </div>
+                                    <h2 className="text-sm mb-1">
+                                        Jam Tangan Casio
+                                    </h2>
+                                    <h3 className="text-xs text-neutral-neutral03 mb-2">
+                                        Aksesoris
+                                    </h3>
+                                    <h3 className="text-sm">Rp 250.000</h3>
                                 </div>
-                                <h2 className="text-sm mb-1">
-                                    Jam Tangan Casio
-                                </h2>
-                                <h3 className="text-xs text-neutral-neutral03 mb-2">
-                                    Aksesoris
-                                </h3>
-                                <h3 className="text-sm">Rp 250.000</h3>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>
