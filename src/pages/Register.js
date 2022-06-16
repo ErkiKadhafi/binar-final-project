@@ -7,7 +7,7 @@ const Register = () => {
     return(
         <section className="mx-5 font-poppins lg:grid lg:grid-cols-2 lg:mx-0">
             <img src="/images/banner-login.svg" alt="banner-login" className="banner-login w-full h-screen object-cover" />
-            <div className="space-y-6 md:flex md:flex-col md:w-3/5 md:m-auto">
+            <div className="gap-6 flex flex-col sm:w-3/5 sm:m-auto">
                 <header className='py-4 lg:hidden'>
                     <img src="/images/fi_arrow-left.svg" alt=''/>
                 </header>
@@ -27,7 +27,7 @@ const Register = () => {
                     </fieldset>
                     <Button className="w-full mt-6">Daftar</Button>
                 </form>
-                <p className="text-center">Sudah punya akun?
+                <p className="link-register mt-4">Sudah punya akun?
                     <a href="/login" className="text-primary-darkblue04 font-bold ml-2">Masuk di sini</a>
                 </p>
             </div>
