@@ -3,3 +3,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.container-big {
+    max-width: 73rem; /* 1168px */
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (min-width: 1024px) {
+    #category-swiper .swiper-slide {
+        width: min-content !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .banner-login{
+        display: none;
+    }
+    .container-banner {
+        max-width: 73rem; /* 1168px */
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .bg-gradientLimegreen {
+        background: linear-gradient(
+            180deg,
+            #ffe9c9 59.55%,
+            rgba(255, 233, 202, 0) 100%
+        );
+    }
+}

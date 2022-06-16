@@ -5,13 +5,13 @@ import Button from "../components/Button";
 const Profil = () => {
 
     return(
-        <section className="h-screen mx-4 font-poppins md:grid md:grid-cols-2 md:mx-0">
-            <div className="space-y-6 md:flex md:flex-col md:w-3/5 md:m-auto">
-                <header className='py-4 md:hidden'>
+        <section className="h-screen mx-4 font-poppins">
+            <div className="container-big md:grid md:items-start md:mx-0">
+                <header className='py-4'>
                     <img src="/images/fi_arrow-left.svg" alt=''/>
                 </header>
-                <div className='flex'>
-                  <img clas="" src="/images/fi_camera.svg" alt=""/>
+                <div className='rounded-lg bg-primary-darkblue01'>
+                  <img className="mx-auto" src="/images/fi_camera.svg" alt=""/>
                 </div>
                 <form>
                     <fieldset className='flex flex-col gap-1 mt-4'>
@@ -30,7 +30,7 @@ const Profil = () => {
                         <label>No Handphone*</label>
                         <Input type="password" placeholder="Contoh: +6282222222" />
                     </fieldset>
-                    <Button className="w-full mt-6 bg-primary-darkblue05">Simpan</Button>
+                    <Button className="w-full mt-6 bg-primary-darkblue04">Simpan</Button>
                 </form>
             </div>
         </section>
