@@ -38,7 +38,7 @@ const ProductInfo = () => {
                     <fieldset className="flex flex-col mt-4 space-y-1">
                         <label>Deskripsi</label>
                         <Input
-                            type="password"
+                            type="text"
                             placeholder="Contoh: Jalan Ikan Hiu 33"
                         />
                     </fieldset>
