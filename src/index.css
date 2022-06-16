@@ -16,6 +16,12 @@
     margin-left: auto;
     margin-right: auto;
 }
+.container-small {
+    max-width: 35.5rem; /* 568px */
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 @media screen and (min-width: 1024px) {
     #category-swiper .swiper-slide {
