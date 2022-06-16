@@ -1,4 +1,5 @@
 import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react"
 import Button from "../components/Button";
 
 const SaleListPage = () => {
@@ -19,10 +20,22 @@ const SaleListPage = () => {
                 </div>
                 <Button variant="outlined" className="my-auto px-3 py-1">Edit</Button>
             </figure>
-            <menu className="my-6 flex">
-                <Button className="py-3 px-4"><span><img src="/images/fi_box.svg" alt="" className="mr-2"/></span>Produk</Button>
-                <Button className="py-3 px-4"><span><img src="/images/fi_heart.svg" alt="" className="mr-2"/></span>Diminati</Button>
-                <Button className="py-3 px-4"><span><img src="/images/fi_dollar-sign.svg" alt="" className="mr-2"/></span>Terjual</Button>
+            <menu className="my-6">
+                <Swiper
+                    id="button-swiper"
+                    spaceBetween={16}
+                    slidesPerView={2.5}
+                >
+                    <SwiperSlide className="w-max">
+                        <Button className="py-3 px-4"><span><img src="/images/fi_box.svg" alt="" className="mr-2"/></span>Produk</Button>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                        <Button variant="secondary" className="py-3 px-4"><span><img src="/images/fi_heart.svg" alt="" className="mr-2"/></span>Diminati</Button>
+                    </SwiperSlide>
+                    <SwiperSlide>
+                        <Button variant="secondary" className="py-3 px-4"><span><img src="/images/fi_dollar-sign.svg" alt="" className="mr-2"/></span>Terjual</Button>
+                    </SwiperSlide>
+                </Swiper>
             </menu>
             <article className="grid grid-cols-2 gap-4">
                 <div className="rounded border-2 border-neutral-neutral02 border-dashed flex">

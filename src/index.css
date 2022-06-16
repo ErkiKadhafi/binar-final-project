@@ -31,4 +31,7 @@
             rgba(255, 233, 202, 0) 100%
         );
     }
+    #button-swiper .swiper-slide {
+        width: max-content !important;
+    }
 }
