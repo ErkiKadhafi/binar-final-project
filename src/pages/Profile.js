@@ -6,19 +6,21 @@ import { Link } from "react-router-dom";
 
 const Profile = () => {
     return (
-        <section className="pt-118px md:pt-116px">
+        <section className="pt-5 md:pt-116px">
             <div className="container-small relative">
                 <Link
                     to="/"
-                    className="md:absolute -left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
+                    className="absolute md:-left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                 >
                     {/* prettier-ignore  */}
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M19 12H5" stroke="#151515" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M12 19L5 12L12 5" stroke="#151515" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                            <path d="M19 12H5" stroke="#151515" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 19L5 12L12 5" stroke="#151515" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                 </Link>
-
+                <p className="text-center font-medium mb-10 md:hidden pt-1">
+                    Lengkapi Info Akun
+                </p>
                 <div className="w-24 h-24 flex items-center justify-center mx-auto rounded-lg bg-primary-darkblue01">
                     {/* prettier-ignore  */}
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
