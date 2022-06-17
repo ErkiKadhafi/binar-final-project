@@ -33,6 +33,14 @@
     .banner-login {
         display: none;
     }
+    .link-login, .link-register {
+        position    : absolute;
+        transform   : translate(-50%);
+        bottom      : 1.5rem;
+        left        : 50%;
+        width       : 100%;
+        text-align  : center;
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -68,3 +76,4 @@
     border: 1px solid #7126b5 !important;
     opacity: 1;
 }
+
