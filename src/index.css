@@ -10,6 +10,12 @@
     margin-left: auto;
     margin-right: auto;
 }
+.container-medium {
+    max-width: 60.5rem; /* 968px */
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 @media screen and (min-width: 1024px) {
     #category-swiper .swiper-slide {
@@ -18,6 +24,9 @@
 }
 
 @media screen and (max-width: 768px) {
+    .menu-list{
+        display: none;
+    }
     .container-banner {
         max-width: 73rem; /* 1168px */
         width: 90%;
