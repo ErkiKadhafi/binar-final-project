@@ -1,5 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import Button from "../components/Button";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
 // prettier-ignore
@@ -9,8 +11,16 @@ const SvgSearch = ({ fill="stroke-black"}) => (
         <path d="M17.5 17.5L13.875 13.875" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 )
+// prettier-ignore
+const SvgPlus = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 4.16669V15.8334" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M4.1665 10H15.8332" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+)
 
 const Home = () => {
+    const navigate = useNavigate();
     return (
         <>
             <section className="font-poppins pb-5 pt-118px md:pt-116px bg-gradientLimegreen sm:bg-white">
@@ -162,6 +172,13 @@ const Home = () => {
                     })}
                 </div>
             </section>
+            <Button
+                onClick={() => navigate("/productinfo")}
+                className="left-1/2 transform -translate-x-1/2 fixed bottom-7"
+            >
+                <SvgPlus />
+                <span className="ml-4">Jual</span>
+            </Button>
         </>
     );
 };
