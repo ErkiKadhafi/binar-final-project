@@ -5,6 +5,9 @@ module.exports = {
             poppins: ["Poppins", "sans-serif"],
         },
         extend: {
+            screens: {
+                'xsm'   : '360px'
+            },
             colors: {
                 primary: {
                     darkblue05: "#4B1979",
@@ -43,8 +46,11 @@ module.exports = {
                 "56px": "56px",
             },
             spacing: {
+                "76px": "76px",
+                "30px": "30px",
                 "116px": "116px",
                 "118px": "118px",
+                "300px": "300px",
             },
         },
     },
