@@ -1,20 +1,53 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-
 import Button from "../components/Button";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import Modal from "../components/Modal";
+import Input from "../components/Input";
 
 const Product = () => {
     const prevRef = useRef(null);
     const nextRef = useRef(null);
-
+    const [modalOpen, setModalOpen] = useState(false);
     return (
         <>
+            <Modal
+                isOpen={modalOpen}
+                onClose={() => {
+                    setModalOpen(false);
+                }}
+            >
+                <h1 className="text-sm font-medium mb-4">
+                    Masukkan Harga Tawarmu
+                </h1>
+                <h2 className="text-sm text-neutral-neutral03 mb-4">
+                    Harga tawaranmu akan diketahui penual, jika penjual cocok
+                    kamu akan segera dihubungi penjual.
+                </h2>
+                <div className="rounded-2xl p-4 flex space-x-4 shadow-low mb-6">
+                    <img
+                        src="/images/watch_big.png"
+                        className="h-12 w-12 rounded-xl"
+                        alt="product"
+                    />
+                    <div className="flex flex-col space-y-2">
+                        <h3 className="text-sm font-medium ">
+                            Jam Tangan Casio
+                        </h3>
+                        <h3 className="">Rp. 250.000</h3>
+                    </div>
+                </div>
+                <div className="mb-6">
+                    <label className="text-xs mb-2">Harga Tawar</label>
+                    <Input type="text" placeholder="Rp 0,00" />
+                </div>
+                <Button className="w-full">Kirim</Button>
+            </Modal>
+
             <section className="md:pb-6 md:pt-116px">
                 {/* ======== shown on mobile ======== */}
                 <div className="h-300px md:hidden relative">
@@ -50,11 +83,6 @@ const Product = () => {
                         {/* ======== hidden on mobile ======== */}
                         <div className="col-span-7 space-y-6 hidden md:block">
                             <Swiper
-                                navigation={{
-                                    // Both prevEl & nextEl are null at render so this does not work
-                                    prevEl: prevRef.current,
-                                    nextEl: nextRef.current,
-                                }}
                                 loop={true}
                                 pagination={{ clickable: true }}
                                 onSwiper={(swiper) => {
@@ -77,7 +105,7 @@ const Product = () => {
                             >
                                 {[...Array(4)].map((item, index) => (
                                     <SwiperSlide key={index}>
-                                        <div className="h-[27.25rem] bg-red-400 ">
+                                        <div className="h-[27.25rem] ">
                                             <img
                                                 className="object-cover h-full w-full "
                                                 src="/images/watch_big.png"
@@ -92,7 +120,7 @@ const Product = () => {
                                 >
                                     {/* prettier-ignore */}
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M15 18L9 12L15 6" stroke="#8A8A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M15 18L9 12L15 6" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </div>
                                 <div
@@ -101,7 +129,7 @@ const Product = () => {
                                 >
                                     {/* prettier-ignore */}
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9 18L15 12L9 6" stroke="#8A8A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M9 18L15 12L9 6" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </div>
                             </Swiper>
@@ -117,8 +145,11 @@ const Product = () => {
                                 <h2 className="md:mb-6">Rp 250.000</h2>
                                 <div className="md:space-y-3.5">
                                     {/* ======== if seller ======== */}
-                                    <Button className="w-full hidden md:block">
-                                        Terbitkan
+                                    <Button
+                                        onClick={() => setModalOpen(true)}
+                                        className="w-full hidden md:block"
+                                    >
+                                        Saya tertarik dan Ingin Nego
                                     </Button>
                                 </div>
                             </div>
@@ -182,9 +213,22 @@ const Product = () => {
                     </div>
                 </div>
             </section>
-            <Button className="w-[90%] left-1/2 transform -translate-x-1/2 fixed bottom-8 md:hidden">
-                Terbitkan
+
+            {/* ======== if u want to nego ======== */}
+            <Button
+                onClick={() => setModalOpen(true)}
+                className="w-[90%] left-1/2 transform -translate-x-1/2 fixed bottom-8 md:hidden"
+            >
+                Saya tertarik dan Ingin Nego
             </Button>
+
+            {/* ======== if u want to published it ======== */}
+            {/* <div className="w-[90%] left-[5%] fixed bottom-8 md:hidden flex space-x-4">
+                <Button variant="secondary" className="w-full">
+                    Edit
+                </Button>
+                <Button className="w-full">Terbitkan</Button>
+            </div> */}
         </>
     );
 };

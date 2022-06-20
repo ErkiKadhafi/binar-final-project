@@ -147,7 +147,7 @@ const Home = () => {
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {[...Array(20)].map((item, index) => {
                         return (
-                            <Link to={`/product/${index}`}>
+                            <Link to={`/product/${index}`} key={index}>
                                 <div
                                     key={index}
                                     className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition"
