@@ -5,10 +5,25 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import ProductInfo from "./pages/ProductInfo";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
     return (
         <BrowserRouter>
+            <ToastContainer
+                position="top-center"
+                autoClose={1500}
+                // autoClose={false}
+                hideProgressBar
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
             <Routes>
                 <Route path="/" element={<Home />}></Route>
                 <Route path="/product/:id" element={<Product />}></Route>
