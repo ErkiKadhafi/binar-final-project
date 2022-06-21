@@ -23,6 +23,11 @@
     margin-right: auto;
 }
 
+@media screen and (min-width: 768px) {
+    #product-swiper {
+        border-radius: 16px;
+    }
+}
 @media screen and (min-width: 1024px) {
     #category-swiper .swiper-slide {
         width: min-content !important;
@@ -33,13 +38,14 @@
     .banner-login {
         display: none;
     }
-    .link-login, .link-register {
-        position    : absolute;
-        transform   : translate(-50%);
-        bottom      : 1.5rem;
-        left        : 50%;
-        width       : 100%;
-        text-align  : center;
+    .link-login,
+    .link-register {
+        position: absolute;
+        transform: translate(-50%);
+        bottom: 1.5rem;
+        left: 50%;
+        width: 100%;
+        text-align: center;
     }
 }
 
@@ -77,3 +83,8 @@
     opacity: 1;
 }
 
+.swiper-lazy-preloader {
+    border-bottom: 4px solid #7126b5 !important;
+    border-left: 4px solid #7126b5 !important;
+    border-right: 4px solid #7126b5 !important;
+}
