@@ -23,6 +23,10 @@
     margin-right: auto;
 }
 
+#banner-swiper .swiper-slide-active .active-child {
+    @apply h-full;
+}
+
 @media screen and (min-width: 1024px) {
     #category-swiper .swiper-slide {
         width: min-content !important;
