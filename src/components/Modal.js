@@ -39,7 +39,7 @@ const Modal = ({ isOpen = false, onClose, children }) => {
                     isOpen
                         ? "translate-y-0 md:translate-y-0"
                         : "translate-y-full md:translate-y-0"
-                } transition-all font-poppins w-full md:w-[360px] pt-4 px-8 pb-6 bg-white rounded-t-2xl md:rounded-2xl max-h-4/5 z-50 overflow-auto relative `}
+                } transition-all duration-500 font-poppins w-full md:w-[360px] pt-4 px-8 pb-6 bg-white rounded-t-2xl md:rounded-2xl max-h-4/5 z-50 overflow-auto relative `}
             >
                 {/* ======== gray bar on mobile ======== */}
                 <div className="bg-[#C4C4C4] rounded-[20px] w-[60px] h-[6px] mb-[18px] mx-auto md:hidden" />
