@@ -2,8 +2,9 @@ import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Navigation } from "swiper";
+import { Lazy, Pagination, Navigation } from "swiper";
 import "swiper/css";
+import "swiper/css/lazy";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Modal from "../components/Modal";
@@ -83,6 +84,7 @@ const Product = () => {
                         {/* ======== hidden on mobile ======== */}
                         <div className="col-span-7 space-y-6 hidden md:block">
                             <Swiper
+                                lazy={true}
                                 loop={true}
                                 pagination={{ clickable: true }}
                                 onSwiper={(swiper) => {
@@ -100,17 +102,18 @@ const Product = () => {
                                         swiper.navigation.update();
                                     });
                                 }}
-                                modules={[Pagination, Navigation]}
+                                modules={[Lazy, Pagination, Navigation]}
                                 id="product-swiper"
                             >
                                 {[...Array(4)].map((item, index) => (
                                     <SwiperSlide key={index}>
                                         <div className="h-[27.25rem] ">
                                             <img
-                                                className="object-cover h-full w-full "
+                                                className="object-cover h-full w-full swiper-lazy"
                                                 src="/images/watch_big.png"
                                                 alt="watch"
                                             />
+                                            <div className="swiper-lazy-preloader border-primary-darkblue04"></div>
                                         </div>
                                     </SwiperSlide>
                                 ))}
