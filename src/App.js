@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import ProductInfo from "./pages/ProductInfo";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SellerInfo from "./pages/SellerInfo";
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/register" element={<Register />}></Route>
                 <Route path="/login" element={<Login />}></Route>
                 <Route path="/productinfo" element={<ProductInfo />}></Route>
+                <Route path="/seller_info" element={<SellerInfo />}></Route>
             </Routes>
         </BrowserRouter>
     );
