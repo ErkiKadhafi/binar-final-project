@@ -1,6 +1,7 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Button from "../components/Button";
+import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
@@ -23,6 +24,7 @@ const Home = () => {
     const navigate = useNavigate();
     return (
         <>
+            <Navbar />
             <section className="font-poppins pb-5 pt-[118px] md:pt-8 bg-gradientLimegreen sm:bg-white">
                 {/* ======== banner slides ======== */}
                 <div className="container-banner mb-10">
@@ -176,7 +178,7 @@ const Home = () => {
                 </div>
             </section>
             <Button
-                onClick={() => navigate("/productinfo")}
+                onClick={() => navigate("/add_product")}
                 className="left-1/2 transform -translate-x-1/2 fixed bottom-7"
             >
                 <SvgPlus />

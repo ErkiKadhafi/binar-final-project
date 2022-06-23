@@ -9,6 +9,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Modal from "../components/Modal";
 import Input from "../components/Input";
+import Navbar from "../components/Navbar";
 
 const Product = () => {
     const prevRef = useRef(null);
@@ -16,6 +17,7 @@ const Product = () => {
     const [modalOpen, setModalOpen] = useState(false);
     return (
         <>
+            <Navbar showOnMobile={false} />
             <Modal
                 isOpen={modalOpen}
                 onClose={() => {
@@ -49,7 +51,7 @@ const Product = () => {
                 <Button className="w-full">Kirim</Button>
             </Modal>
 
-            <section className="md:pb-6 md:pt-116px">
+            <section className="md:pb-6 md:pt-8">
                 {/* ======== shown on mobile ======== */}
                 <div className="h-300px md:hidden relative">
                     <Swiper

@@ -1,10 +1,10 @@
-import {BrowserRouter, Routes, Route} from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Product from "./pages/Product";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import ProductInfo from "./pages/ProductInfo";
+import AddProduct from "./pages/AddProduct";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SellerInfo from "./pages/SellerInfo";
@@ -31,7 +31,7 @@ function App() {
                 <Route path="/profile" element={<Profile />}></Route>
                 <Route path="/register" element={<Register />}></Route>
                 <Route path="/login" element={<Login />}></Route>
-                <Route path="/productinfo" element={<ProductInfo />}></Route>
+                <Route path="/add_product" element={<AddProduct />}></Route>
                 <Route path="/seller_info" element={<SellerInfo />}></Route>
             </Routes>
         </BrowserRouter>
