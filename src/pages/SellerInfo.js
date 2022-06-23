@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 // prettier-ignore
 const SvgWhatssap = () => (
@@ -138,18 +139,26 @@ const SellerInfo = () => {
                     </Button>
                 </form>
             </Modal>
-            <section className="font-poppins pt-5 md:pt-114px">
+            <Navbar
+                showSearchInput={false}
+                titleSearch="Info Penawar"
+                showOnMobile={false}
+            />
+            <section className="font-poppins pt-5 md:pt-10">
                 <div className="container-small relative">
                     <Link
                         to="/"
-                        className="md:absolute -left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
+                        className="absolute md:-left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                     >
                         {/* prettier-ignore  */}
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M19 12H5" stroke="#151515" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-							<path d="M12 19L5 12L12 5" stroke="#151515" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-						</svg>
+                            <path d="M19 12H5" stroke="#151515" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M12 19L5 12L12 5" stroke="#151515" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                     </Link>
+                    <p className="text-center font-medium mb-8 md:mb-10 md:hidden pt-1">
+                        Info Penawar
+                    </p>
                     <div className="mb-6 p-4 shadow-low rounded-2xl flex items-center space-x-4 bg-white">
                         <div>
                             <img
