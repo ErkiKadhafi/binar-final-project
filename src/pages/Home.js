@@ -23,7 +23,7 @@ const Home = () => {
     const navigate = useNavigate();
     return (
         <>
-            <section className="font-poppins pb-5 pt-118px md:pt-116px bg-gradientLimegreen sm:bg-white">
+            <section className="font-poppins pb-5 pt-[118px] md:pt-8 bg-gradientLimegreen sm:bg-white">
                 {/* ======== banner slides ======== */}
                 <div className="container-banner mb-10">
                     <Swiper
