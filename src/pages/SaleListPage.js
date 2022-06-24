@@ -1,9 +1,26 @@
 import React, { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react"
 import Button from "../components/Button";
+import SaleListPageInterested from "./SaleListPage-Interested";
+import SaleListPageProduct from "./SaleListPage-Product";
 
 const SaleListPage = () => {
 
+    // Active Menu with get Params
+    const [searchParams, setSearchParams] = useSearchParams()
+    const activeMenu = () => {
+        switch(searchParams.get('list')){
+            case 'Produk':
+                return(<SaleListPageProduct/>)
+            case 'Diminati':
+                return(<SaleListPageInterested/>)
+            default:
+                return null
+        }
+    }
+
+    // Style Active Menu
     const [menu, setSelectedMenu] = useState({
         activeMenu  : null,
         content     : [
@@ -39,10 +56,11 @@ const SaleListPage = () => {
 
     const styleButton = 'flex rounded-xl py-3 px-4 gap-2'
     const styleList   = 'flex space-x-2 py-4 cursor-pointer'
-    const toggleActiveMenu = (index) => {
+    const toggleActiveMenu = (index, event) => {
         setSelectedMenu({
             ...menu, 
             activeMenu    : menu.content[index]})
+        setSearchParams({list: `${event.target.innerText}`})
     }
 
     const styleActiveMenu = (index) => {
@@ -89,12 +107,12 @@ const SaleListPage = () => {
                         id="button-swiper"
                         spaceBetween={16}
                         slidesPerView={2.5}
-                        className="mb-6 md:hidden"
+                        className="md:hidden"
                     >
                         {menu.content.map((element, index) => {
                             return(
                                 <SwiperSlide key={index}>
-                                    <button onClick = {() => {toggleActiveMenu(index)}} className={styleActiveMenu(index)}>
+                                    <button onClick = {(event) => {toggleActiveMenu(index, event)}} className={styleActiveMenu(index)}>
                                         <span>
                                             {element.icon}
                                         </span>{element.name}
@@ -109,7 +127,7 @@ const SaleListPage = () => {
                         <ul className="mt-6 divide-y divide-neutral-neutral03">
                             {menu.content.map((element, index) => {
                                 return(
-                                    <li key={index} onClick = {() => {toggleActiveMenu(index)}} className={styleActiveMenu(index)}>
+                                    <li key={index} onClick = {(event) => {toggleActiveMenu(index, event)}} className={styleActiveMenu(index)}>
                                         {element.icon}
                                         <p className="w-40">{element.name}</p>
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -121,32 +139,7 @@ const SaleListPage = () => {
                         </ul>
                     </div>
                 </menu>
-
-                <article className="w-full grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6">
-                    <div className="rounded border-2 border-neutral-neutral02 border-dashed flex">
-                        <div className="m-auto">
-                            <div className="m-auto w-max">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M12 5V19" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M5 12H19" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                </svg>
-                            </div>
-                            <p className="text-xs text-neutral-neutral03 mt-2">Tambah Produk</p>
-                        </div>
-                    </div>
-                    {Array.from([1, 2, 3, 4, 5, 6], index => {
-                        return(
-                            <figure className="p-2 rounded shadow" key={index}>
-                                <img src="/images/Product.svg" alt="Product" className="m-auto"/>
-                                <figcaption className="my-2">
-                                    <p className="text-sm mb-1">Jam Tangan Casio</p>
-                                    <p className="text-xs text-neutral-neutral03">Aksesoris</p>
-                                </figcaption>
-                                <p className="text-sm mb-4">Rp 250.000</p>
-                            </figure>
-                        )
-                    })}
-                </article>
+                {activeMenu()}
             </div>
         </section>
     )
