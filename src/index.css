@@ -54,6 +54,9 @@
 }
 
 @media screen and (max-width: 768px) {
+    .menu-list{
+        display: none;
+    }
     .container-banner {
         max-width: 73rem; /* 1168px */
         width: 90%;
@@ -66,6 +69,9 @@
             #ffe9c9 59.55%,
             rgba(255, 233, 202, 0) 100%
         );
+    }
+    #button-swiper .swiper-slide {
+        width: max-content !important;
     }
 }
 
