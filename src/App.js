@@ -9,6 +9,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SellerInfo from "./pages/SellerInfo";
 import { useSelector } from "react-redux";
+import SaleListPage from "./pages/SaleListPage";
+import Notification from "./pages/Notification";
 
 function App() {
     const { isAuthenticated } = useSelector((store) => store.user);
@@ -56,6 +58,8 @@ function App() {
                 />
                 <Route path="/add_product" element={<AddProduct />}></Route>
                 <Route path="/seller_info" element={<SellerInfo />}></Route>
+                <Route path="/list" element={<SaleListPage />}></Route>
+                <Route path="/notification" element={<Notification />}></Route>
             </Routes>
         </BrowserRouter>
     );
