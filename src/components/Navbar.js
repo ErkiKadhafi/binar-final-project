@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import Button from "./Button";
 
@@ -71,6 +72,7 @@ function Navbar({
     titleSearch,
     isCustomTitleSearch = false,
 }) {
+    const { isAuthenticated } = useSelector((store) => store.user);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [transparentBackground, setTransparentBackground] = useState(true);
     const router = useNavigate();
@@ -158,23 +160,32 @@ function Navbar({
                     {(showSearchInput || isCustomTitleSearch) && (
                         <>
                             <div className="hidden md:block ml-auto">
-                                {/* <Button className="py-[14px] px-4">
-                                    <Svgmasuk />
-                                    <span className="ml-2 my-auto ">Masuk</span>
-                                </Button> */}
-                                <div className="flex space-x-7 items-center">
-                                    <Link to="/list">
-                                        <SvgList className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
-                                    </Link>
-                                    <a className="relative">
-                                        <SvgBell className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
-                                        {/* <SvgBell className="stroke-primary-darkblue04" />
+                                {isAuthenticated ? (
+                                    <div className="flex space-x-7 items-center">
+                                        <Link to="/list">
+                                            <SvgList className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
+                                        </Link>
+                                        <a className="relative">
+                                            <SvgBell className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
+                                            {/* <SvgBell className="stroke-primary-darkblue04" />
                                         <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" /> */}
-                                    </a>
-                                    <Link to="/profile">
-                                        <SvgUser className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
-                                    </Link>
-                                </div>
+                                        </a>
+                                        <Link to="/profile">
+                                            <SvgUser className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        onClick={() => router("/login")}
+                                        className="py-[14px] px-4"
+                                    >
+                                        <Svgmasuk />
+                                        <span className="ml-2 my-auto ">
+                                            Masuk
+                                        </span>
+                                    </Button>
+                                )}
                             </div>
                         </>
                     )}
