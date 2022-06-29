@@ -73,8 +73,11 @@ function Navbar({
 }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [transparentBackground, setTransparentBackground] = useState(true);
+    const [popupNotification, setPopUpNotification] = useState(false)
+    const [readNotification, setReadNotification] = useState('')
     const router = useNavigate();
 
+    console.log(popupNotification)
     // change background nav when user change page
     useEffect(() => {
         if (window.scrollY >= 100) setTransparentBackground(false);
@@ -166,11 +169,44 @@ function Navbar({
                                     <Link to="/list">
                                         <SvgList className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
                                     </Link>
-                                    <a className="relative">
+                                    <div onClick={() => {setPopUpNotification(true)}} className="relative cursor-pointer">
                                         <SvgBell className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
+                                        { popupNotification && 
+                                        <div className="absolute shadow-lg w-max top-10 -right-7 px-6 py-2 divide-y divide-[#E5E5E5] rounded-2xl bg-white">
+                                            <div onClick={() => {setReadNotification('hidden')}} className="flex space-x-4 py-4">
+                                                <img src="./images/watch-small.png" alt="" className="h-max" />
+                                                <div className="space-y-1">
+                                                    <div className="flex space-x-2 items-center">
+                                                        <p className="w-44 text-xs text-neutral-neutral03">Penawaran produk</p>
+                                                        <p className="text-xs text-neutral-neutral03">20 Apr, 14:04</p>
+                                                        <svg className={`${readNotification}`} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="4" cy="4" r="4" fill="#FA2C5A"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p className="text-sm">Jam Tangan Casio</p>
+                                                    <p className="text-sm">Rp 250.000</p>
+                                                    <p className="text-sm">Ditawar Rp 200.000</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex space-x-4 py-4">
+                                                <img src="./images/watch-small.png" alt="" className="h-max" />
+                                                <div className="space-y-1">
+                                                    <div className="flex space-x-2 items-center">
+                                                        <p className="w-44 text-xs text-neutral-neutral03">Penawaran produk</p>
+                                                        <p className="text-xs text-neutral-neutral03">20 Apr, 14:04</p>
+                                                        <svg className={`${readNotification}`} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="4" cy="4" r="4" fill="#FA2C5A"/>
+                                                        </svg>
+                                                    </div>
+                                                    <p className="text-sm">Jam Tangan Casio</p>
+                                                    <p className="text-sm">Rp 250.000</p>
+                                                    <p className="text-sm">Ditawar Rp 200.000</p>
+                                                </div>
+                                            </div>
+                                        </div> }
                                         {/* <SvgBell className="stroke-primary-darkblue04" />
                                         <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" /> */}
-                                    </a>
+                                    </div>
                                     <Link to="/profile">
                                         <SvgUser className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
                                     </Link>
