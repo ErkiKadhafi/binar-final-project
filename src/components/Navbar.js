@@ -51,12 +51,7 @@ const SvgList = ({className}) => (
     </svg>
 )
 // prettier-ignore
-const SvgBell = ({className}) => (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-)
+
 // prettier-ignore
 const SvgUser = ({className}) => (
     <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,13 +66,42 @@ function Navbar({
     titleSearch,
     isCustomTitleSearch = false,
 }) {
+    const SvgBell = ({className}) => (
+        <svg onClick={() => {popupNotification()}} className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    )
+    const SvgNotifBell = () => (
+        <svg onClick={() => {popupNotification()}} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="#7126B5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="#7126B5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="17" cy="4" r="3.5" fill="#FA2C5A" stroke="white"/>
+        </svg>
+    )
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [transparentBackground, setTransparentBackground] = useState(true);
-    const [popupNotification, setPopUpNotification] = useState(false)
-    const [readNotification, setReadNotification] = useState('')
+
+    const [showNotification, setShowNotification] = useState(false)
+    const [notification, setNotification] = useState(true)
+    const [readNotification, setReadNotification] = useState('block')
+    const [activeBell, setActiveBell] = useState('stroke-[#151515]')
     const router = useNavigate();
 
-    console.log(popupNotification)
+    const userClickNotification = () => {
+        setReadNotification('hidden')
+        setNotification(false)
+    }
+
+    const popupNotification = () => {
+        setShowNotification(true)
+        setActiveBell('stroke-primary-darkblue04')
+        if(showNotification){
+            setShowNotification(false)
+            setActiveBell('stroke-[#151515]')
+        }
+    }
     // change background nav when user change page
     useEffect(() => {
         if (window.scrollY >= 100) setTransparentBackground(false);
@@ -169,40 +193,29 @@ function Navbar({
                                     <Link to="/list">
                                         <SvgList className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
                                     </Link>
-                                    <div onClick={() => {setPopUpNotification(true)}} className="relative cursor-pointer">
-                                        <SvgBell className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
-                                        { popupNotification && 
+                                    <div className="relative cursor-pointer">
+                                        { notification ? <SvgNotifBell /> : <SvgBell className={`${activeBell} hover:stroke-primary-darkblue04 transition`} />}
+                                        { showNotification && 
                                         <div className="absolute shadow-lg w-max top-10 -right-7 px-6 py-2 divide-y divide-[#E5E5E5] rounded-2xl bg-white">
-                                            <div onClick={() => {setReadNotification('hidden')}} className="flex space-x-4 py-4">
-                                                <img src="./images/watch-small.png" alt="" className="h-max" />
-                                                <div className="space-y-1">
-                                                    <div className="flex space-x-2 items-center">
-                                                        <p className="w-44 text-xs text-neutral-neutral03">Penawaran produk</p>
-                                                        <p className="text-xs text-neutral-neutral03">20 Apr, 14:04</p>
-                                                        <svg className={`${readNotification}`} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="4" cy="4" r="4" fill="#FA2C5A"/>
-                                                        </svg>
+                                            {Array.from([1, 2, 3],(index) => {
+                                                return(
+                                                <div onClick={() => userClickNotification()} key={index} className="flex space-x-4 py-4">
+                                                    <img src="./images/watch-small.png" alt="" className="h-max" />
+                                                    <div className="space-y-1">
+                                                        <div className="flex space-x-2 items-center">
+                                                            <p className="w-44 text-xs text-neutral-neutral03">Penawaran produk</p>
+                                                            <p className="text-xs text-neutral-neutral03">20 Apr, 14:04</p>
+                                                            <svg className={readNotification} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <circle cx="4" cy="4" r="4" fill="#FA2C5A"/>
+                                                            </svg>
+                                                        </div>
+                                                        <p className="text-sm">Jam Tangan Casio</p>
+                                                        <p className="text-sm">Rp 250.000</p>
+                                                        <p className="text-sm">Ditawar Rp 200.000</p>
                                                     </div>
-                                                    <p className="text-sm">Jam Tangan Casio</p>
-                                                    <p className="text-sm">Rp 250.000</p>
-                                                    <p className="text-sm">Ditawar Rp 200.000</p>
                                                 </div>
-                                            </div>
-                                            <div className="flex space-x-4 py-4">
-                                                <img src="./images/watch-small.png" alt="" className="h-max" />
-                                                <div className="space-y-1">
-                                                    <div className="flex space-x-2 items-center">
-                                                        <p className="w-44 text-xs text-neutral-neutral03">Penawaran produk</p>
-                                                        <p className="text-xs text-neutral-neutral03">20 Apr, 14:04</p>
-                                                        <svg className={`${readNotification}`} width="8" height="8" viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <circle cx="4" cy="4" r="4" fill="#FA2C5A"/>
-                                                        </svg>
-                                                    </div>
-                                                    <p className="text-sm">Jam Tangan Casio</p>
-                                                    <p className="text-sm">Rp 250.000</p>
-                                                    <p className="text-sm">Ditawar Rp 200.000</p>
-                                                </div>
-                                            </div>
+                                                )
+                                            })}
                                         </div> }
                                         {/* <SvgBell className="stroke-primary-darkblue04" />
                                         <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" /> */}
