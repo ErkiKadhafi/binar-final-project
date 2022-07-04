@@ -1,5 +1,8 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import Button from "../components/Button";
+import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 
 // prettier-ignore
@@ -9,11 +12,20 @@ const SvgSearch = ({ fill="stroke-black"}) => (
         <path d="M17.5 17.5L13.875 13.875" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 )
+// prettier-ignore
+const SvgPlus = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 4.16669V15.8334" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M4.1665 10H15.8332" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+)
 
 const Home = () => {
+    const navigate = useNavigate();
     return (
         <>
-            <section className="font-poppins pb-5 pt-118px md:pt-116px bg-gradientLimegreen sm:bg-white">
+            <Navbar />
+            <section className="font-poppins pb-5 pt-[118px] md:pt-8 bg-gradientLimegreen sm:bg-white">
                 {/* ======== banner slides ======== */}
                 <div className="container-banner mb-10">
                     <Swiper
@@ -25,43 +37,46 @@ const Home = () => {
                             // when window width is >= 768px
                             768: {
                                 spaceBetween: 16,
-                                slidesPerView: 1.9,
+                                slidesPerView: 1.5,
                                 initialSlide: 1,
                             },
                         }}
+                        id="banner-swiper"
                     >
                         {[...Array(3)].map((item, index) => (
                             <SwiperSlide key={index}>
-                                <div className="relative bg-transparent md:bg-primary-limegreen03 md:rounded-20px p-0 md:py-8 lg:py-12 md:px-10 :px-20">
-                                    <div className="relative z-20 flex justify-between items-center w-full 2xl:w-2/3">
-                                        <div className="text-neutral-neutral05">
-                                            <div className="font-bold text-xl lg:text-4xl mb-4">
-                                                <h1 className="lg:leading-56px">
-                                                    Bulan Ramadhan <br /> Banyak
-                                                    Diskon
+                                <div className="flex items-center justify-center md:h-[200px] lg:h-[288px]">
+                                    <div className="md:flex items-center transition-all md:h-4/5 w-full active-child relative bg-transparent md:bg-primary-limegreen03 md:rounded-20px p-0 md:py-8 md:px-10 my-auto">
+                                        <div className="relative z-20 flex justify-between items-center w-full 2xl:w-2/3">
+                                            <div className="text-neutral-neutral05">
+                                                <div className="font-bold text-xl lg:text-4xl mb-4">
+                                                    <h1 className="lg:leading-56px">
+                                                        Bulan Ramadhan <br />{" "}
+                                                        Banyak Diskon
+                                                    </h1>
+                                                </div>
+                                                <h1 className="text-xs lg:text-sm mb-1 lg:mb-2">
+                                                    Diskon Hingga
+                                                </h1>
+                                                <h1 className="text-lg lg:text-3xl font-medium text-alert-danger">
+                                                    60%
                                                 </h1>
                                             </div>
-                                            <h1 className="text-xs lg:text-sm mb-1 lg:mb-2">
-                                                Diskon Hingga
-                                            </h1>
-                                            <h1 className="text-lg lg:text-3xl font-medium text-alert-danger">
-                                                60%
-                                            </h1>
+                                            <div className="">
+                                                <img
+                                                    className="h-32 md:h-28 lg:h-auto"
+                                                    src="/images/gift.png"
+                                                    alt="gift"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="">
+                                        <div className="hidden md:block absolute top-0 bottom-0 right-0 ">
                                             <img
-                                                className="h-32 lg:h-auto"
-                                                src="/images/gift.png"
-                                                alt="gift"
+                                                className="object-cover h-full"
+                                                src="/images/mosque.png"
+                                                alt="mosque"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="hidden md:block absolute top-0 bottom-0 right-0 ">
-                                        <img
-                                            className="object-cover h-full"
-                                            src="/images/mosque.png"
-                                            alt="mosque"
-                                        />
                                     </div>
                                 </div>
                             </SwiperSlide>
@@ -137,7 +152,7 @@ const Home = () => {
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {[...Array(20)].map((item, index) => {
                         return (
-                            <Link to={`/product/${index}`}>
+                            <Link to={`/product/${index}`} key={index}>
                                 <div
                                     key={index}
                                     className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition"
@@ -162,6 +177,13 @@ const Home = () => {
                     })}
                 </div>
             </section>
+            <Button
+                onClick={() => navigate("/add_product")}
+                className="left-1/2 transform -translate-x-1/2 fixed bottom-7"
+            >
+                <SvgPlus />
+                <span className="ml-4">Jual</span>
+            </Button>
         </>
     );
 };
