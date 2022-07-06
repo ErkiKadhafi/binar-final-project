@@ -3,9 +3,53 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "../components/Select";
 import { Link } from "react-router-dom";
+import * as Yup from "yup";
 import Navbar from "../components/Navbar";
+import { useFormik } from "formik";
+import { addProduct } from "../features/user/product/productSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
-const add_product = () => {
+const AddProduct = () => {
+
+    const dispatch = useDispatch
+    const userState = JSON.parse(localStorage.getItem("secondhand"))
+    const initialValues = {
+        productName : "",
+        description : "",
+        price       : "",
+        categoryId  : ""
+    }
+
+    const categoryOptions = [
+        {key: 'Pilih Kategori', value:''},
+        {key: 'Sepatu', value:1},
+        {key: 'Baju', value:2},
+        {key: 'Jam Tangan', value:3},
+    ]
+
+    const validation = () => {
+        const validationObject = {
+            productName: Yup.string().required(
+                "Masukkan Nama Produk"
+            )
+        }
+        return Yup.object().shape(validationObject)
+    }
+
+    const formik = useFormik({
+        initialValues,
+        validation,
+        onSubmit: (values) => {
+            if(userState){
+                console.log(values)
+                dispatch(addProduct(values))
+            }else{
+                toast.info("Silakan Login Terlebih Dahulu");
+            }
+        },
+    });
+    
     return (
         <>
             <Navbar
@@ -28,28 +72,47 @@ const add_product = () => {
                     <p className="text-center font-medium mb-10 md:hidden pt-1">
                         Lengkapi Detail Produk
                     </p>
-                    <form>
+                    <form onSubmit={formik.handleSubmit} method="POST">
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>Nama Produk</label>
-                            <Input type="text" placeholder="Nama Produk" />
+                            <Input 
+                                type="text" 
+                                id='productName'
+                                name='productName'
+                                placeholder="Nama Produk"
+                                onChange={formik.handleChange}
+                                value={formik.values.productName}
+                            />
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>Harga Produk</label>
-                            <Input type="text" placeholder="Harga Produk" />
+                            <Input 
+                                type="number"
+                                id='price'
+                                name='price'
+                                placeholder="Harga Produk"
+                                onChange={formik.handleChange}
+                                value={formik.values.price}
+                            />
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>Kategori</label>
-                            <Select>
-                                <option value="surabaya">Pilih Kategori</option>
-                                <option value="jakarta">Accesories</option>
-                                <option value="bali">Fashion</option>
+                            <Select
+                                name='categoryId' 
+                                options={categoryOptions} 
+                                onChange={formik.handleChange} 
+                                 >
                             </Select>
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>Deskripsi</label>
                             <Input
                                 type="text"
+                                id='description'
+                                name='description'
                                 placeholder="Contoh: Jalan Ikan Hiu 33"
+                                onChange={formik.handleChange}
+                                value={formik.values.description}
                             />
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-6">
@@ -66,7 +129,7 @@ const add_product = () => {
                             <Button className="w-64" variant="secondary">
                                 Preview
                             </Button>
-                            <Button className="w-64 ">Terbitkan</Button>
+                            <Button type="submit" className="w-64 ">Terbitkan</Button>
                         </div>
                     </form>
                 </div>
@@ -75,4 +138,4 @@ const add_product = () => {
     );
 };
 
-export default add_product;
+export default AddProduct;
