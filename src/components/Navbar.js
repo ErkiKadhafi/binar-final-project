@@ -216,15 +216,27 @@ function Navbar({
                         </button>
                     </div>
                     <div>
-                        {/* <Button className="py-[14px] px-4">
-                            <Svgmasuk />
-                            <span className="ml-2 my-auto ">Masuk</span>
-                        </Button> */}
-                        <div className="flex flex-col space-y-4">
-                            <a className="font-medium">Notifikasi</a>
-                            <a className="font-medium">Daftar Jual</a>
-                            <a className="font-medium">Akun Saya</a>
-                        </div>
+                        {isAuthenticated ? (
+                            <div className="flex flex-col space-y-4">
+                                <Link
+                                    to="/notification"
+                                    className="font-medium"
+                                >
+                                    Notifikasi
+                                </Link>
+                                <Link to="/list" className="font-medium">
+                                    Daftar Jual
+                                </Link>
+                                <Link to="/profile" className="font-medium">
+                                    Akun Saya
+                                </Link>
+                            </div>
+                        ) : (
+                            <Button className="py-[14px] px-4">
+                                <Svgmasuk />
+                                <span className="ml-2 my-auto ">Masuk</span>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
