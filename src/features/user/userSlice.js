@@ -5,7 +5,16 @@ import { toast } from "react-toastify";
 // check if user is already login
 const userState = JSON.parse(localStorage.getItem("secondhand"))
     ? JSON.parse(localStorage.getItem("secondhand"))
-    : { accessToken: "", email: "", roles: [], type: "" };
+    : {
+          id: "",
+          accessToken: "",
+          fullName: "",
+          email: "",
+          type: "",
+          addres: {},
+          phoneNumber: "",
+          imageUrl: "",
+      };
 const isAuthenticated = JSON.parse(localStorage.getItem("secondhand"))
     ? true
     : false;
@@ -25,7 +34,7 @@ export const login = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
-            delete data.id;
+            // delete data.id;
 
             // keep access token and user information on local storage
             localStorage.setItem("secondhand", JSON.stringify(data));
@@ -54,10 +63,61 @@ export const register = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
-            delete data.id;
+            // delete data.id;
 
             // keep access token and user information on local storage
             localStorage.setItem("secondhand", JSON.stringify(data));
+
+            return data;
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
+
+export const updateProfile = createAsyncThunk(
+    "/api/v1/users/profile-user",
+    async (payload, thunkAPI) => {
+        const { accessToken } = thunkAPI.getState().user;
+
+        const url = `${process.env.REACT_APP_BASE_URL}/api/v1/users/profile-user`;
+        try {
+            const resp = await axios.put(url, payload, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            // remove id from response
+            const data = resp.data.data;
+            // delete data.id;
+
+            let tempLocalstorage = JSON.parse(
+                localStorage.getItem("secondhand")
+            );
+            tempLocalstorage.fullName = data.name;
+            tempLocalstorage.address.street = data.street;
+            tempLocalstorage.address.city = data.city;
+            tempLocalstorage.phoneNumber = data.phoneNumber;
+
+            // if the user change their avatar
+            if (data.urlImage) tempLocalstorage.imageUrl = data.urlImage;
+
+            // keep access token and user information on local storage
+            localStorage.setItem(
+                "secondhand",
+                JSON.stringify(tempLocalstorage)
+            );
+            console.log(data);
 
             return data;
         } catch (error) {
@@ -82,21 +142,49 @@ const userSlice = createSlice({
         [login.pending]: (state) => {},
         [login.fulfilled]: (state, { payload }) => {
             state.isAuthenticated = true;
+            state.id = payload.id;
             state.accessToken = payload.accessToken;
+            state.fullName = payload.fullName;
             state.email = payload.email;
-            state.roles = payload.roles;
             state.type = payload.type;
+
+            // because address is returned as null not empty obj
+            if (payload.addres) state.address = payload.address;
+            else state.addres = {};
+
+            state.phoneNumber = payload.phoneNumber;
+            state.imageUrl = payload.imageUrl;
         },
         [login.rejected]: (state, action) => {},
         [register.pending]: (state) => {},
         [register.fulfilled]: (state, { payload }) => {
             state.isAuthenticated = true;
+            state.id = payload.id;
             state.accessToken = payload.accessToken;
+            state.fullName = payload.fullName;
             state.email = payload.email;
-            state.roles = payload.roles;
             state.type = payload.type;
+
+            // because address is returned as null not empty obj
+            if (payload.addres) state.address = payload.address;
+            else state.addres = {};
+
+            state.address = payload.address;
+            state.phoneNumber = payload.phoneNumber;
+            state.imageUrl = payload.imageUrl;
         },
         [register.rejected]: (state, action) => {},
+        [updateProfile.pending]: (state) => {},
+        [updateProfile.fulfilled]: (state, { payload }) => {
+            state.fullName = payload.name;
+            state.address.city = payload.city;
+            state.address.street = payload.street;
+            state.phoneNumber = payload.phoneNumber;
+
+            // if the user change their avatar
+            if (payload.urlImage) state.imageUrl = payload.urlImage;
+        },
+        [updateProfile.rejected]: (state, action) => {},
     },
 });
 

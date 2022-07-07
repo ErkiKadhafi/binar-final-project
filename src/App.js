@@ -20,6 +20,11 @@ function App() {
             return children;
         } else return <Navigate to="/" replace />;
     };
+    const ContentRoute = ({ children }) => {
+        if (isAuthenticated) {
+            return children;
+        } else return <Navigate to="/login" replace />;
+    };
 
     return (
         <BrowserRouter>
@@ -39,7 +44,14 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />}></Route>
                 <Route path="/product/:id" element={<Product />}></Route>
-                <Route path="/profile" element={<Profile />}></Route>
+                <Route
+                    path="/profile"
+                    element={
+                        <ContentRoute>
+                            <Profile />
+                        </ContentRoute>
+                    }
+                ></Route>
                 <Route
                     path="/register"
                     element={
