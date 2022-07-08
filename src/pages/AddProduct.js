@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "../components/Select";
@@ -13,12 +13,14 @@ import { toast } from "react-toastify";
 const AddProduct = () => {
 
     const dispatch = useDispatch
+    const [image, setImage] = useState()
     const userState = JSON.parse(localStorage.getItem("secondhand"))
     const initialValues = {
         productName : "",
         description : "",
         price       : "",
-        categoryId  : ""
+        categoryId  : "",
+        image       : image,
     }
 
     const categoryOptions = [
@@ -28,9 +30,9 @@ const AddProduct = () => {
         {key: 'Jam Tangan', value:3},
     ]
 
-    const validation = () => {
+    const validationSchema = () => {
         const validationObject = {
-            productName: Yup.string().required(
+            product: Yup.string().required(
                 "Masukkan Nama Produk"
             )
         }
@@ -39,17 +41,19 @@ const AddProduct = () => {
 
     const formik = useFormik({
         initialValues,
-        validation,
+        // validationSchema,
         onSubmit: (values) => {
             if(userState){
                 console.log(values)
-                dispatch(addProduct(values))
+                // dispatch(addProduct(values))
             }else{
                 toast.info("Silakan Login Terlebih Dahulu");
             }
         },
     });
     
+    // console.log(formik.errors.product)
+    // console.log(image)
     return (
         <>
             <Navbar
@@ -83,6 +87,11 @@ const AddProduct = () => {
                                 onChange={formik.handleChange}
                                 value={formik.values.productName}
                             />
+                            {formik.touched.product && formik.errors.product && (
+                            <span className="text-sm text-red-500">
+                                {formik.errors.product}
+                            </span>
+                            )}
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>Harga Produk</label>
@@ -123,6 +132,13 @@ const AddProduct = () => {
                                     <path d="M12 5V19" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     <path d="M5 12H19" stroke="#8A8A8A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                 </svg>
+                                <input 
+                                    type='file'
+                                    id='images'
+                                    name='images'
+                                    accept="image/*"
+                                    onChange={(e) => setImage(e.target.files[0])}
+                                    className="absolute h-full w-full opacity-0" />
                             </div>
                         </fieldset>
                         <div className="md:absolute flex flex-row items-start mt-28 gap-4">
