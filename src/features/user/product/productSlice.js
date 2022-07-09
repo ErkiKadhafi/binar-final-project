@@ -1,12 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
+const productDetail = {
+    productName : "",
+    description : "",
+    price       : "",
+    categoryId  : "",
+    image       : null,
+}
 const isAuthenticated = JSON.parse(localStorage.getItem("secondhand"))
     ? true
     : false;
 
 const initialState = {
     isAuthenticated,
+    ...productDetail
 };
 
 export const addProduct = createAsyncThunk(

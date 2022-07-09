@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "../components/Select";
@@ -7,20 +7,25 @@ import * as Yup from "yup";
 import Navbar from "../components/Navbar";
 import { useFormik } from "formik";
 import { addProduct } from "../features/user/product/productSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
 const AddProduct = () => {
 
     const dispatch = useDispatch
-    const [image, setImage] = useState()
+    const {productName, description, price, categoryId, image} = useSelector((store) => store.addProduct)
     const userState = JSON.parse(localStorage.getItem("secondhand"))
     const initialValues = {
-        productName : "",
-        description : "",
-        price       : "",
-        categoryId  : "",
-        image       : image,
+        productName,
+        description,
+        price,
+        categoryId,
+        image
+    }
+
+    const handleUploadProdct = (e) => {
+        const file = e.target.files[0]
+        formik.setFieldValue("image", file)
     }
 
     const categoryOptions = [
@@ -32,7 +37,7 @@ const AddProduct = () => {
 
     const validationSchema = () => {
         const validationObject = {
-            product: Yup.string().required(
+            productName: Yup.string().required(
                 "Masukkan Nama Produk"
             )
         }
@@ -41,19 +46,21 @@ const AddProduct = () => {
 
     const formik = useFormik({
         initialValues,
-        // validationSchema,
+        validationSchema,
         onSubmit: (values) => {
             if(userState){
                 console.log(values)
-                // dispatch(addProduct(values))
+                dispatch(addProduct(values))
+                    .unwrap()
+                    .then(() => {
+                        toast.success("Berhasil Menambahkan Produk")
+                    })
             }else{
                 toast.info("Silakan Login Terlebih Dahulu");
             }
         },
     });
     
-    // console.log(formik.errors.product)
-    // console.log(image)
     return (
         <>
             <Navbar
@@ -65,7 +72,7 @@ const AddProduct = () => {
                 <div className="container-small relative">
                     <Link
                         to="/"
-                        className="absolute md:-left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
+                        className="absolute md:-left-76px w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                     >
                         {/* prettier-ignore  */}
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,9 +94,9 @@ const AddProduct = () => {
                                 onChange={formik.handleChange}
                                 value={formik.values.productName}
                             />
-                            {formik.touched.product && formik.errors.product && (
+                            {formik.touched.productName && formik.errors.productName && (
                             <span className="text-sm text-red-500">
-                                {formik.errors.product}
+                                {formik.errors.productName}
                             </span>
                             )}
                         </fieldset>
@@ -137,7 +144,7 @@ const AddProduct = () => {
                                     id='images'
                                     name='images'
                                     accept="image/*"
-                                    onChange={(e) => setImage(e.target.files[0])}
+                                    onChange={handleUploadProdct}
                                     className="absolute h-full w-full opacity-0" />
                             </div>
                         </fieldset>
