@@ -1,9 +1,17 @@
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProducts } from "../features/producrs/productSlice";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
+import CardProduct from "../components/CardProduct";
+
+import queryString from "query-string";
 
 // prettier-ignore
 const SvgSearch = ({ fill="stroke-black"}) => (
@@ -20,8 +28,51 @@ const SvgPlus = () => (
     </svg>
 )
 
+const categories = [
+    { id: 0, name: "Semua" },
+    { id: 1, name: "Hobi" },
+    { id: 2, name: "Kendaraan" },
+    { id: 3, name: "Baju" },
+    { id: 4, name: "Elektronik" },
+    { id: 5, name: "Kesehatan" },
+];
+
 const Home = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const { totalProducts, products, isLoadingAllProducts } = useSelector(
+        (store) => store.product
+    );
+    const dispatch = useDispatch();
+    const [firstRender, setFirstRender] = useState(true);
+    const [filterCategory, setFilterCategory] = useState(categories[0]);
+
+    /* ======== use effect for get all products, triggered when query string is added ======== */
+    useEffect(() => {
+        dispatch(getAllProducts(location.search));
+    }, [location.search]);
+
+    /* ======== use effect for categories change ======== */
+    useEffect(() => {
+        /* ======== first render doesn't add all categories to the query string ======== */
+        if (firstRender && filterCategory.id === 0) {
+            setFirstRender(false);
+            return;
+        }
+
+        const queryParsed = queryString.parse(location.search);
+
+        /* ======== check if it's there is no filter ======== */
+        if (filterCategory.id === 0) delete queryParsed.categoryId;
+        else queryParsed.categoryId = filterCategory.id;
+
+        const queryStringified = queryString.stringify(queryParsed);
+        location.search = queryStringified;
+
+        navigate({ pathname: "/", search: location.search });
+    }, [filterCategory]);
+
     return (
         <>
             <Navbar />
@@ -115,19 +166,22 @@ const Home = () => {
                                 },
                             }}
                         >
-                            {[...Array(6)].map((item, index) => {
-                                let isSelected;
-                                if (index === 0) isSelected = true;
+                            {categories.map(({ id, name }, index) => {
+                                const isSelected = filterCategory.id === id;
                                 return (
                                     <SwiperSlide key={index}>
                                         <div className=" cursor-pointer">
                                             <div
-                                                type="button"
+                                                onClick={() =>
+                                                    setFilterCategory(
+                                                        categories[index]
+                                                    )
+                                                }
                                                 className={`${
                                                     isSelected
                                                         ? "bg-primary-darkblue04 text-white"
                                                         : "bg-primary-darkblue01 text-black"
-                                                } flex justify-center items-center space-x-2 px-4 md:px-6 py-3 md:py-3.5 text-base rounded-xl `}
+                                                } flex justify-center items-center space-x-2 px-3 md:px-6 py-3 md:py-3.5 text-base rounded-xl `}
                                             >
                                                 <SvgSearch
                                                     fill={`${
@@ -137,7 +191,7 @@ const Home = () => {
                                                     }`}
                                                 />
                                                 <span className="text-sm">
-                                                    Semua
+                                                    {name}
                                                 </span>
                                             </div>
                                         </div>
@@ -148,33 +202,41 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <section className="font-poppins md:py-5">
+            <section className="font-poppins md:pt-5 md:pb-12">
+                {/* ======== list products ======== */}
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {[...Array(20)].map((item, index) => {
-                        return (
-                            <Link to={`/product/${index}`} key={index}>
-                                <div
-                                    key={index}
-                                    className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition"
-                                >
-                                    <div className="mb-2">
-                                        <img
-                                            src="/images/watch.png"
-                                            className="h-full w-full object-cover"
-                                            alt={index}
-                                        />
-                                    </div>
-                                    <h2 className="text-sm mb-1">
-                                        Jam Tangan Casio
-                                    </h2>
-                                    <h3 className="text-xs text-neutral-neutral03 mb-2">
-                                        Aksesoris
-                                    </h3>
-                                    <h3 className="text-sm">Rp 250.000</h3>
-                                </div>
-                            </Link>
-                        );
-                    })}
+                    {isLoadingAllProducts ? (
+                        <>
+                            {[...Array(20)].map((product, index) => {
+                                return (
+                                    <CardProduct
+                                        product={{ productId: index }}
+                                        key={index}
+                                    />
+                                );
+                            })}
+                        </>
+                    ) : (
+                        <>
+                            {products.map((product, index) => {
+                                return (
+                                    <CardProduct
+                                        isLoading={false}
+                                        product={product}
+                                        key={index}
+                                    />
+                                );
+                            })}
+                        </>
+                    )}
+                </div>
+                {/* ======== if there is no product ======== */}
+                <div className="container-big ">
+                    {!isLoadingAllProducts && totalProducts === 0 && (
+                        <p className="mt-32 text-2xl font-bold text-neutral-neutral03 text-center">
+                            Tidak ada Produk
+                        </p>
+                    )}
                 </div>
             </section>
             <Button
