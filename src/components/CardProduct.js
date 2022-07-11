@@ -47,8 +47,8 @@ const CardProduct = ({ isLoading = true, product }) => {
     const { productId, productName, price, categoryId, productImages } =
         product;
     return (
-        <Link to={`/product/${productId}`}>
-            <div className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition">
+        <Link to={`/product/${productId}`} className="h-full">
+            <div className="rounded shadow-low px-2 pt-2 pb-4 transform hover:scale-105 transition h-full">
                 <div className="mb-2 h-[100px]">
                     <img
                         src={productImages[0]}
