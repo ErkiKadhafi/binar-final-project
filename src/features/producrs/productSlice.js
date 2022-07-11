@@ -14,7 +14,7 @@ export const getAllProducts = createAsyncThunk(
     "/api/v1/home",
     async (queryString, thunkAPI) => {
         let url = `${process.env.REACT_APP_BASE_URL}/api/v1/home${queryString}`;
-        console.log(url)
+        
         try {
             const resp = await axios.get(url);
 
