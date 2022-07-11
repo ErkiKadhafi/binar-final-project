@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router";
+
+import { useSelector } from "react-redux";
+
 import Button from "./Button";
+
+import queryString from "query-string";
 
 // prettier-ignore
 const Svglogoungu = ({className}) => (
@@ -85,6 +89,16 @@ function Navbar({
         setShowPopupNotification(!showPopupNotification);
     };
 
+    /* ======== for search movie ======== */
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [filterSearch, setFilterSearch] = useState(
+        "productName" in queryString.parse(location.search)
+            ? queryString.parse(location.search).productName
+            : ""
+    );
+    const [firstRender, setFirstRender] = useState(true);
+
     // change background nav when user change page
     useEffect(() => {
         if (window.scrollY >= 100) setTransparentBackground(false);
@@ -96,6 +110,24 @@ function Navbar({
         else setTransparentBackground(true);
     };
     window.addEventListener("scroll", changeBackgroundNav);
+
+    // handling filter search
+    useEffect(() => {
+        if (firstRender) {
+            setFirstRender(false);
+            return;
+        }
+        const timeOutId = setTimeout(() => {
+            const queryParsed = queryString.parse(location.search);
+            if (filterSearch === "") delete queryParsed.productName;
+            else queryParsed.productName = filterSearch;
+
+            const queryStringified = queryString.stringify(queryParsed);
+            location.search = queryStringified;
+            navigate({ pathname: "/", search: location.search });
+        }, 500);
+        return () => clearTimeout(timeOutId);
+    }, [filterSearch]);
 
     return (
         <>
@@ -133,6 +165,11 @@ function Navbar({
                                             : "border border-neutral-neutral02"
                                     } md:border-none text-sm w-full rounded-2xl  md:bg-[#EEEEEE] py-[14px] pl-6 pr-8`}
                                     placeholder="Cari di sini ..."
+                                    name="productName"
+                                    value={filterSearch}
+                                    onChange={(e) =>
+                                        setFilterSearch(e.target.value)
+                                    }
                                 />
                                 <Svglup className="absolute top-1/2 right-6 -translate-y-1/2 " />
                             </div>
@@ -147,6 +184,11 @@ function Navbar({
                                             : "border border-neutral-neutral02"
                                     } md:border-none text-sm w-full rounded-2xl  md:bg-[#EEEEEE] py-[14px] pl-6 pr-8`}
                                     placeholder="Cari di sini ..."
+                                    name="productName"
+                                    value={filterSearch}
+                                    onChange={(e) =>
+                                        setFilterSearch(e.target.value)
+                                    }
                                 />
                                 <Svglup className="absolute top-1/2 right-6 -translate-y-1/2 " />
                             </div>
