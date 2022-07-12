@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router";
+
+import { useSelector } from "react-redux";
+
 import Button from "./Button";
+
+import queryString from "query-string";
 
 // prettier-ignore
 const Svglogoungu = ({className}) => (
@@ -51,17 +56,17 @@ const SvgList = ({className}) => (
     </svg>
 )
 // prettier-ignore
-const SvgBell = ({className}) => (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-)
-// prettier-ignore
 const SvgUser = ({className}) => (
     <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+)
+// prettier-ignore
+const SvgBell = ({className, onClick}) => (
+    <svg onClick={onClick} className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 )
 
@@ -71,22 +76,58 @@ function Navbar({
     titleSearch,
     isCustomTitleSearch = false,
 }) {
+    /* ======== for auth routing ======== */
+    const router = useNavigate();
+    const { isAuthenticated } = useSelector((store) => store.user);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [transparentBackground, setTransparentBackground] = useState(true);
-    const router = useNavigate();
+
+    /* ======== for notification popup ======== */
+    const [showPopupNotification, setShowPopupNotification] = useState(false);
+    const [showNewNotification, setShowNewNotification] = useState(true);
+    const triggerPopupNotification = () => {
+        setShowPopupNotification(!showPopupNotification);
+    };
+
+    /* ======== for search movie ======== */
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [filterSearch, setFilterSearch] = useState(
+        "productName" in queryString.parse(location.search)
+            ? queryString.parse(location.search).productName
+            : ""
+    );
+    const [firstRender, setFirstRender] = useState(true);
 
     // change background nav when user change page
     useEffect(() => {
         if (window.scrollY >= 100) setTransparentBackground(false);
         else setTransparentBackground(true);
     }, [router]);
-
     const changeBackgroundNav = () => {
         // console.log(window.scrollY);
         if (window.scrollY >= 100) setTransparentBackground(false);
         else setTransparentBackground(true);
     };
     window.addEventListener("scroll", changeBackgroundNav);
+
+    // handling filter search
+    useEffect(() => {
+        if (firstRender) {
+            setFirstRender(false);
+            return;
+        }
+        const timeOutId = setTimeout(() => {
+            const queryParsed = queryString.parse(location.search);
+            if (filterSearch === "") delete queryParsed.productName;
+            else queryParsed.productName = filterSearch;
+
+            const queryStringified = queryString.stringify(queryParsed);
+            location.search = queryStringified;
+            navigate({ pathname: "/", search: location.search });
+        }, 500);
+        return () => clearTimeout(timeOutId);
+    }, [filterSearch]);
 
     return (
         <>
@@ -124,6 +165,11 @@ function Navbar({
                                             : "border border-neutral-neutral02"
                                     } md:border-none text-sm w-full rounded-2xl  md:bg-[#EEEEEE] py-[14px] pl-6 pr-8`}
                                     placeholder="Cari di sini ..."
+                                    name="productName"
+                                    value={filterSearch}
+                                    onChange={(e) =>
+                                        setFilterSearch(e.target.value)
+                                    }
                                 />
                                 <Svglup className="absolute top-1/2 right-6 -translate-y-1/2 " />
                             </div>
@@ -138,6 +184,11 @@ function Navbar({
                                             : "border border-neutral-neutral02"
                                     } md:border-none text-sm w-full rounded-2xl  md:bg-[#EEEEEE] py-[14px] pl-6 pr-8`}
                                     placeholder="Cari di sini ..."
+                                    name="productName"
+                                    value={filterSearch}
+                                    onChange={(e) =>
+                                        setFilterSearch(e.target.value)
+                                    }
                                 />
                                 <Svglup className="absolute top-1/2 right-6 -translate-y-1/2 " />
                             </div>
@@ -155,28 +206,102 @@ function Navbar({
                             </>
                         )}
                     </div>
+                    {/* ======== button masuk, nav on the right side, and popup notification ======== */}
                     {(showSearchInput || isCustomTitleSearch) && (
-                        <>
-                            <div className="hidden md:block ml-auto">
-                                {/* <Button className="py-[14px] px-4">
-                                    <Svgmasuk />
-                                    <span className="ml-2 my-auto ">Masuk</span>
-                                </Button> */}
+                        <div className="hidden md:block ml-auto">
+                            {isAuthenticated ? (
+                                /* ======== nav on the rightside ======== */
                                 <div className="flex space-x-7 items-center">
                                     <Link to="/list">
                                         <SvgList className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
                                     </Link>
-                                    <a className="relative">
-                                        <SvgBell className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
-                                        {/* <SvgBell className="stroke-primary-darkblue04" />
-                                        <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" /> */}
-                                    </a>
+                                    <div className="relative cursor-pointer">
+                                        <SvgBell
+                                            onClick={triggerPopupNotification}
+                                            className={`${
+                                                showPopupNotification
+                                                    ? "stroke-primary-darkblue04"
+                                                    : "stroke-black"
+                                            } hover:stroke-primary-darkblue04 transition`}
+                                        />
+                                        {/* ======== red dots on the bell ======== */}
+                                        {showNewNotification && (
+                                            <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" />
+                                        )}
+                                        {/* ======== popup notification ======== */}
+                                        <div
+                                            className={`${
+                                                showPopupNotification
+                                                    ? "visible opacity-1"
+                                                    : "invisible opacity-0"
+                                            } transition-all absolute shadow-high w-[376px] top-10 -right-7 px-6 py-2 divide-y divide-[#E5E5E5] rounded-2xl bg-white`}
+                                        >
+                                            {Array.from([1, 2, 3], (index) => {
+                                                return (
+                                                    <div
+                                                        onClick={() =>
+                                                            setShowNewNotification(
+                                                                false
+                                                            )
+                                                        }
+                                                        key={index}
+                                                        className="flex space-x-4 py-4"
+                                                    >
+                                                        <img
+                                                            src="./images/watch-small.png"
+                                                            alt=""
+                                                            className="h-max"
+                                                        />
+                                                        <div className="space-y-1 grow">
+                                                            <div className="flex justify-between items-center">
+                                                                <p className="text-xs text-neutral-neutral03">
+                                                                    Penawaran
+                                                                    produk
+                                                                </p>
+                                                                <div className="flex items-center space-x-2">
+                                                                    {/* prettier-ignore  */}
+                                                                    <p className="text-xs text-neutral-neutral03">
+                                                                        20 Apr,14:04
+                                                                    </p>
+                                                                    {showNewNotification && (
+                                                                        <div className="rounded-full bg-alert-danger h-2 w-2 " />
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            {/* prettier-ignore  */}
+                                                            <p className="text-sm">
+                                                                Jam Tangan Casio
+                                                            </p>
+                                                            {/* prettier-ignore  */}
+                                                            <p className="text-sm">
+                                                                Rp 250.000
+                                                            </p>
+                                                            {/* prettier-ignore  */}
+                                                            <p className="text-sm">
+                                                                Ditawar Rp 200.000
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
                                     <Link to="/profile">
                                         <SvgUser className="stroke-[#151515] hover:stroke-primary-darkblue04 transition" />
                                     </Link>
                                 </div>
-                            </div>
-                        </>
+                            ) : (
+                                /* ======== button masuk ======== */
+                                <Button
+                                    type="button"
+                                    onClick={() => router("/login")}
+                                    className="py-[14px] px-4"
+                                >
+                                    <Svgmasuk />
+                                    <span className="ml-2 my-auto ">Masuk</span>
+                                </Button>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
@@ -205,15 +330,31 @@ function Navbar({
                         </button>
                     </div>
                     <div>
-                        {/* <Button className="py-[14px] px-4">
-                            <Svgmasuk />
-                            <span className="ml-2 my-auto ">Masuk</span>
-                        </Button> */}
-                        <div className="flex flex-col space-y-4">
-                            <a className="font-medium">Notifikasi</a>
-                            <a className="font-medium">Daftar Jual</a>
-                            <a className="font-medium">Akun Saya</a>
-                        </div>
+                        {isAuthenticated ? (
+                            <div className="flex flex-col space-y-4">
+                                <Link
+                                    to="/notification"
+                                    className="font-medium"
+                                >
+                                    Notifikasi
+                                </Link>
+                                <Link to="/list" className="font-medium">
+                                    Daftar Jual
+                                </Link>
+                                <Link to="/profile" className="font-medium">
+                                    Akun Saya
+                                </Link>
+                            </div>
+                        ) : (
+                            <Button
+                                className="py-[14px] px-4"
+                                type="button"
+                                onClick={() => router("/login")}
+                            >
+                                <Svgmasuk />
+                                <span className="ml-2 my-auto ">Masuk</span>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>
