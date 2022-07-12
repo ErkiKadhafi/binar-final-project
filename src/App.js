@@ -77,7 +77,14 @@ function App() {
                     }
                 ></Route>
                 <Route path="/seller_info" element={<SellerInfo />}></Route>
-                <Route path="/list" element={<SaleListPage />}></Route>
+                <Route
+                    path="/list"
+                    element={
+                        <ContentRoute>
+                            <SaleListPage />
+                        </ContentRoute>
+                    }
+                ></Route>
                 <Route path="/notification" element={<Notification />}></Route>
             </Routes>
         </BrowserRouter>

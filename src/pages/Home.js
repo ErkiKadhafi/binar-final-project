@@ -202,7 +202,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <section className="font-poppins md:pt-5 md:pb-12">
+            <section className="font-poppins md:pt-5 pb-12">
                 {/* ======== list products ======== */}
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {isLoadingAllProducts ? (
@@ -233,7 +233,7 @@ const Home = () => {
                 {/* ======== if there is no product ======== */}
                 <div className="container-big ">
                     {!isLoadingAllProducts && totalProducts === 0 && (
-                        <p className="mt-32 text-2xl font-bold text-neutral-neutral03 text-center">
+                        <p className="mt-24 md:mb-24 text-2xl font-bold text-neutral-neutral03 text-center">
                             Tidak ada Produk
                         </p>
                     )}
