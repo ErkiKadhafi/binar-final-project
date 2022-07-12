@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "../features/producrs/productSlice";
+import { getAllProducts } from "../features/product/productSlice";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
