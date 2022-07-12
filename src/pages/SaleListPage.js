@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+
 import Button from "../components/Button";
 import Navbar from "../components/Navbar";
+
 import SaleListPageInterested from "./SaleListPage-Interested";
 import SaleListPageProduct from "./SaleListPage-Product";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import {
+    getMyInterestedProducts,
+    getMyProducts,
+    getMySoldProducts,
+} from "../features/product/myProductSlice";
+import SaleListPageSold from "./SaleListPage-Sold";
 
 // prettier-ignore
 const SvgCube = ({ ...props }) => (
@@ -29,6 +40,16 @@ const SvgDollar = ({ ...props }) => (
 );
 
 const SaleListPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const {
+        myProducts,
+        myInterestedProducts,
+        mySoldProducts,
+        isLoadingMyProducts,
+    } = useSelector((state) => state.myProduct);
+    const { fullName, address, imageUrl } = useSelector((state) => state.user);
+
     // Active Menu with get Params
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -50,23 +71,24 @@ const SaleListPage = () => {
             icon: <SvgDollar />,
         },
     ];
-    const [selectedContent, setSelectedContent] = useState({
-        name: "Produk",
-        content: <SaleListPageProduct />,
-    });
+    const [selectedContent, setSelectedContent] = useState("Produk");
 
     useEffect(() => {
-        if (searchParams.get("list") === "Produk")
-            setSelectedContent({
-                name: "Produk",
-                content: <SaleListPageProduct />,
-            });
+        if (searchParams.get("list") === "Produk") setSelectedContent("Produk");
         else if (searchParams.get("list") === "Diminati")
-            setSelectedContent({
-                name: "Diminati",
-                content: <SaleListPageInterested />,
-            });
+            setSelectedContent("Diminati");
+        else if (searchParams.get("list") === "Terjual")
+            setSelectedContent("Terjual");
+        else setSelectedContent("Produk");
     }, [searchParams.get("list")]);
+
+    useEffect(() => {
+        if (selectedContent === "Produk") dispatch(getMyProducts());
+        else if (selectedContent === "Diminati")
+            dispatch(getMyInterestedProducts());
+        else if (selectedContent === "Terjual") dispatch(getMySoldProducts());
+    }, [selectedContent]);
+
     return (
         <>
             <Navbar
@@ -74,18 +96,29 @@ const SaleListPage = () => {
                 showSearchInput={false}
                 isCustomTitleSearch={true}
             />
-            <section className="font-poppins container-medium pt-5 md:pt-10">
+            <section className="font-poppins container-medium py-5 md:pt-10 md:pb-8">
                 <figure className="flex justify-between p-4 shadow-low rounded-2xl">
                     <div className="flex space-x-4">
-                        <img src="/images/Profile.svg" alt="Profile" />
+                        <div className="h-12 w-12">
+                            <img
+                                src={imageUrl}
+                                alt="Profile"
+                                className="object-cover h-full w-full rounded-xl"
+                            />
+                        </div>
                         <figcaption className="space-y-1 my-auto">
-                            <p className="font-medium">Nama Penjual</p>
+                            <p className="font-medium">{fullName}</p>
                             <p className="text-xs text-neutral-neutral03">
-                                Kota
+                                {address.city}
                             </p>
                         </figcaption>
                     </div>
-                    <Button variant="outlined" className="my-auto px-3 py-1">
+                    <Button
+                        type="button"
+                        variant="outlined"
+                        className="my-auto px-3 py-1"
+                        onClick={(e) => navigate("/profile")}
+                    >
                         Edit
                     </Button>
                 </figure>
@@ -100,7 +133,7 @@ const SaleListPage = () => {
                         >
                             {menuList.map((menu, index) => {
                                 let isSelected;
-                                if (menu.name === selectedContent.name)
+                                if (menu.name === selectedContent)
                                     isSelected = true;
                                 return (
                                     <SwiperSlide key={index}>
@@ -136,7 +169,7 @@ const SaleListPage = () => {
                             <ul className="mt-[26px] divide-y divide-neutral-neutral02">
                                 {menuList.map((menu, index) => {
                                     let isSelected;
-                                    if (menu.name === selectedContent.name)
+                                    if (menu.name === selectedContent)
                                         isSelected = true;
                                     return (
                                         <li
@@ -193,7 +226,24 @@ const SaleListPage = () => {
                             </ul>
                         </div>
                     </menu>
-                    {selectedContent.content}
+                    {selectedContent === "Produk" && (
+                        <SaleListPageProduct
+                            products={myProducts}
+                            isLoadingMyProducts={isLoadingMyProducts}
+                        />
+                    )}
+                    {selectedContent === "Diminati" && (
+                        <SaleListPageInterested
+                            products={myInterestedProducts}
+                            isLoadingMyProducts={isLoadingMyProducts}
+                        />
+                    )}
+                    {selectedContent === "Terjual" && (
+                        <SaleListPageSold
+                            products={mySoldProducts}
+                            isLoadingMyProducts={isLoadingMyProducts}
+                        />
+                    )}
                 </div>
             </section>
         </>

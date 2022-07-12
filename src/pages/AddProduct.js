@@ -190,10 +190,18 @@ const AddProduct = () => {
                             <Select
                                 id="categoryId"
                                 name="categoryId"
-                                options={categories}
                                 value={selectedCategory}
                                 onChange={handleChangeCategory}
-                            ></Select>
+                            >
+                                {categories.map((category) => (
+                                    <option
+                                        key={category.key}
+                                        value={category.value}
+                                    >
+                                        {category.key}
+                                    </option>
+                                ))}
+                            </Select>
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label htmlFor="description">

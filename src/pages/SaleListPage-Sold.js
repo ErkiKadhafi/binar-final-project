@@ -33,7 +33,7 @@ const SvgVector = () => (
         <path d="M242.309 68.3647C242.309 68.3647 241.205 62.2695 238.694 62.9977C236.184 63.726 229.722 64.4711 229.71 61.6005C229.698 58.73 235.792 56.1928 239.385 56.5362C242.979 56.8796 249.088 57.9302 248.752 63.3138C248.483 66.7045 247.434 69.9874 245.687 72.9068L242.309 68.3647Z" fill="#4B1979"/>
     </svg>
 )
-const SaleListPageInterested = ({ products, isLoadingMyProducts }) => {
+const SaleListPageSold = ({ products, isLoadingMyProducts }) => {
     // console.log(products);
     return (
         <>
@@ -57,8 +57,8 @@ const SaleListPageInterested = ({ products, isLoadingMyProducts }) => {
                                     <SvgVector />
                                 </div>
                                 <h1 className="text-sm font-medium mt-6">
-                                    Belum ada produkmu yang diterbitkan nih,
-                                    daftarkan produkmu segera!
+                                    Belum ada produkmu yang terjual nih, tetap
+                                    sabar ya!
                                 </h1>
                             </div>
                         </div>
@@ -81,4 +81,4 @@ const SaleListPageInterested = ({ products, isLoadingMyProducts }) => {
     );
 };
 
-export default SaleListPageInterested;
+export default SaleListPageSold;

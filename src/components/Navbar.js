@@ -346,7 +346,11 @@ function Navbar({
                                 </Link>
                             </div>
                         ) : (
-                            <Button className="py-[14px] px-4">
+                            <Button
+                                className="py-[14px] px-4"
+                                type="button"
+                                onClick={() => router("/login")}
+                            >
                                 <Svgmasuk />
                                 <span className="ml-2 my-auto ">Masuk</span>
                             </Button>
