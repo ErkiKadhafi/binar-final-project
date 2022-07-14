@@ -30,19 +30,29 @@ const Profile = () => {
     let tempRegion = address;
     let tempCity;
 
-    // check if the user's city is registered on the dataset
-    tempCity = tempRegion.city;
-    tempRegion = regions.find((region) =>
-        region.kota.find((city) => city === tempRegion.city)
-    );
-
     /* 
-        if user's city is not registered, set it to default value which
+        if user's city is not exist, set it to default value which
         is the first region
     */
     if (!tempRegion) {
         tempRegion = regions[0];
         tempCity = tempRegion.kota[0];
+    } else {
+        // check if the user's city is registered on the dataset
+        tempCity = tempRegion.city;
+        tempRegion = regions.find((region) =>
+            region.kota.find((city) => city === tempRegion.city)
+        );
+
+        /* 
+            if user's city is exist but not registered, 
+            set it to default value which
+            is the first region
+        */
+        if (!tempRegion) {
+            tempRegion = regions[0];
+            tempCity = tempRegion.kota[0];
+        }
     }
 
     const [selectedRegion, setSelectedRegion] = useState(tempRegion);
@@ -83,10 +93,8 @@ const Profile = () => {
             values.userId = id.toString();
 
             if (fileAvatar === "") {
-                console.log("fileAvatar");
                 values.image = null;
             }
-            console.log(values);
 
             toast.loading("Memperbarui profil . . .");
             dispatch(updateProfile(values))
@@ -242,7 +250,7 @@ const Profile = () => {
                         </fieldset>
                         <fieldset className="flex flex-col mt-4 space-y-1">
                             <label>
-                                Alamat<span className="text-red-500">*</span>
+                                Alamat <span className="text-red-500">*</span>
                             </label>
                             <Input
                                 name="street"

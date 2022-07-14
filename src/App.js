@@ -13,19 +13,29 @@ import SaleListPage from "./pages/SaleListPage";
 import Notification from "./pages/Notification";
 
 function App() {
-    const { isAuthenticated } = useSelector((store) => store.user);
+    const { isAuthenticated, address, phoneNumber } = useSelector(
+        (store) => store.user
+    );
 
     const AuthRoute = ({ children }) => {
         if (!isAuthenticated) {
             return children;
-        } else return <Navigate to="/" replace />;
+        } else return <Navigate to="/profile" replace />;
     };
     const ContentRoute = ({ children }) => {
         if (isAuthenticated) {
             return children;
         } else return <Navigate to="/login" replace />;
     };
-
+    const ContentRouteProtected = ({ children }) => {
+        if (
+            address.city !== "" ||
+            address.street !== "" ||
+            address.phoneNumber
+        ) {
+            return children;
+        } else return <Navigate to="/login" replace />;
+    };
     return (
         <BrowserRouter>
             <ToastContainer
@@ -72,7 +82,19 @@ function App() {
                     path="/add_product"
                     element={
                         <ContentRoute>
-                            <AddProduct />
+                            <ContentRouteProtected>
+                                <AddProduct />
+                            </ContentRouteProtected>
+                        </ContentRoute>
+                    }
+                ></Route>
+                <Route
+                    path="/edit_product/:id"
+                    element={
+                        <ContentRoute>
+                            <ContentRouteProtected>
+                                <AddProduct />
+                            </ContentRouteProtected>
                         </ContentRoute>
                     }
                 ></Route>
@@ -81,7 +103,9 @@ function App() {
                     path="/list"
                     element={
                         <ContentRoute>
-                            <SaleListPage />
+                            <ContentRouteProtected>
+                                <SaleListPage />
+                            </ContentRouteProtected>
                         </ContentRoute>
                     }
                 ></Route>

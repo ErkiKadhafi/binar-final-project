@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { register } from "../features/user/userSlice";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const dispatch = useDispatch();
@@ -45,11 +46,13 @@ const Register = () => {
 
     return (
         <section className="mx-5 font-poppins lg:grid lg:grid-cols-2 lg:mx-0">
-            <img
-                src="/images/banner-login.svg"
-                alt="banner-login"
-                className="banner-login w-full h-screen object-cover"
-            />
+            <Link to="/">
+                <img
+                    src="/images/banner-login.svg"
+                    alt="banner-login"
+                    className="banner-login w-full h-screen object-cover"
+                />
+            </Link>
             <div className="gap-6 flex flex-col sm:w-3/5 sm:m-auto">
                 <header className="py-4 lg:hidden">
                     <img src="/images/fi_arrow-left.svg" alt="" />
@@ -114,16 +117,18 @@ const Register = () => {
                             </span>
                         )}
                     </fieldset>
-                    <Button type="submit" className="w-full mt-6">Daftar</Button>
+                    <Button type="submit" className="w-full mt-6">
+                        Daftar
+                    </Button>
                 </form>
                 <p className="link-register mt-4">
                     Sudah punya akun?
-                    <a
-                        href="/login"
+                    <Link
+                        to="/login"
                         className="text-primary-darkblue04 font-bold ml-2"
                     >
                         Masuk di sini
-                    </a>
+                    </Link>
                 </p>
             </div>
         </section>
