@@ -38,7 +38,7 @@ const SaleListPageInterested = ({ products, isLoadingMyProducts }) => {
     return (
         <>
             {isLoadingMyProducts ? (
-                <article className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <article className="w-full mt-6 md:mt-0 grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {[...Array(20)].map((product, index) => {
                         return (
                             <CardProduct

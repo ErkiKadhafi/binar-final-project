@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "../components/Select";
 import Textarea from "../components/Textarea";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import Navbar from "../components/Navbar";
 import { useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { addProduct } from "../features/product/productSlice";
+import { addProduct, updateProduct } from "../features/product/productSlice";
+import { getProductDetails } from "../features/product/transactionProductSlice";
 
 const categories = [
     { value: 1, key: "Hobi" },
@@ -20,8 +21,10 @@ const categories = [
 ];
 
 const AddProduct = () => {
+    const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     /* ======== for changing categories ======== */
     const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -52,22 +55,25 @@ const AddProduct = () => {
 
         // reset error message
         formik.setFieldError("images", "");
+        formik.setFieldValue("images", "");
 
         // if users upload more than 4 images
         if (files.length > 4) {
-            formik.setFieldError("images", "You can only upload 4 images");
-            return;
-        }
-
-        // set data url images for previews
-        [...Array(files.length)].forEach((item, index) => {
-            FiletoDataURL(files[index], (result) => {
-                setPreviewProductImages((prevState) => [...prevState, result]);
+            formik.setFieldError("images", "Hanya bisa mengunggah 4 gambar");
+            formik.setFieldTouched("images", true);
+        } else {
+            // set data url images for previews
+            [...Array(files.length)].forEach((item, index) => {
+                FiletoDataURL(files[index], (result) => {
+                    setPreviewProductImages((prevState) => [
+                        ...prevState,
+                        result,
+                    ]);
+                });
             });
-        });
-
-        // set formik value
-        formik.setFieldValue("images", files);
+            // set formik value
+            formik.setFieldValue("images", files, files.length <= 4);
+        }
     };
 
     /* ======== formik stuff ======== */
@@ -78,6 +84,7 @@ const AddProduct = () => {
         description: "",
         images: "",
     };
+
     const validationSchema = () => {
         const validationObject = {
             productName: Yup.string().required("Masukkan nama produk"),
@@ -87,7 +94,9 @@ const AddProduct = () => {
             description: Yup.string().required(
                 "Tolong masukkan deskripsi produk"
             ),
-            images: Yup.string().required("Tolong masukkan gambar produk"),
+            images: Yup.string().required(
+                "Tolong masukkan gambar produk (Maks 4)"
+            ),
         };
         return Yup.object().shape(validationObject);
     };
@@ -95,7 +104,6 @@ const AddProduct = () => {
         initialValues,
         validationSchema,
         onSubmit: (values) => {
-            console.log(values);
             const formData = new FormData();
             formData.append("categoryId", values.categoryId);
             formData.append("description", values.description);
@@ -105,17 +113,43 @@ const AddProduct = () => {
             [...Array(values.images.length)].forEach((item, index) => {
                 formData.append("images", values.images[index]);
             });
-
-            toast.loading("Menambahkan produk . . .");
-            dispatch(addProduct(formData))
-                .unwrap()
-                .then(() => {
-                    toast.dismiss();
-                    toast.success("Berhasil menambahkan produk!");
-                    navigate("/list");
-                });
+            if (location.pathname.includes("edit_product")) {
+                dispatch(updateProduct(formData));
+                console.log(values);
+            } else {
+                toast.loading("Menambahkan produk . . .");
+                dispatch(addProduct(formData))
+                    .unwrap()
+                    .then(() => {
+                        toast.dismiss();
+                        toast.success("Berhasil menambahkan produk!");
+                        navigate("/list");
+                    });
+            }
         },
     });
+
+    /* ======== for edit product ======== */
+    useEffect(() => {
+        if (location.pathname.includes("edit_product")) {
+            dispatch(getProductDetails(id))
+                .unwrap()
+                .then((payload) => {
+                    formik.setFieldValue("productName", payload.productName);
+                    formik.setFieldValue("price", payload.price);
+                    formik.setFieldValue("description", payload.description);
+
+                    const category = categories.find(
+                        (category) => category.key === payload.categoryName
+                    );
+                    setSelectedCategory(category);
+                    formik.setFieldValue("categoryId", category.value);
+
+                    // set data url images for previews
+                    setPreviewProductImages(payload.productImages);
+                });
+        }
+    }, []);
 
     return (
         <>
@@ -190,7 +224,7 @@ const AddProduct = () => {
                             <Select
                                 id="categoryId"
                                 name="categoryId"
-                                value={selectedCategory}
+                                value={selectedCategory.value}
                                 onChange={handleChangeCategory}
                             >
                                 {categories.map((category) => (
@@ -229,7 +263,7 @@ const AddProduct = () => {
                         </fieldset>
                         <fieldset className="mt-4">
                             <p className="mb-1">
-                                Foto Produk{" "}
+                                Foto Produk (Maks 4){" "}
                                 <span className="text-red-500">*</span>
                             </p>
                             <div className="flex space-x-2">
@@ -245,7 +279,7 @@ const AddProduct = () => {
                                         />
                                     </div>
                                 ))}
-                                {previewProductImages.length <= 4 ? (
+                                {previewProductImages.length <= 4 && (
                                     <div>
                                         <input
                                             type="file"
@@ -271,11 +305,9 @@ const AddProduct = () => {
                                             </svg>
                                         </label>
                                     </div>
-                                ) : (
-                                    <></>
                                 )}
                             </div>
-                            {formik.errors.images && (
+                            {formik.touched.images && formik.errors.images && (
                                 <span className="text-sm text-red-500">
                                     {formik.errors.images}
                                 </span>

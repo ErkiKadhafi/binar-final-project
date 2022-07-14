@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const Login = () => {
     const dispatch = useDispatch();
@@ -40,11 +41,13 @@ const Login = () => {
 
     return (
         <section className="mx-5 font-poppins lg:grid lg:grid-cols-2 lg:mx-0">
-            <img
-                src="/images/banner-login.svg"
-                alt="banner-login"
-                className="banner-login w-full h-screen object-cover"
-            />
+            <Link to="/">
+                <img
+                    src="/images/banner-login.svg"
+                    alt="banner-login"
+                    className="banner-login w-full h-screen object-cover"
+                />
+            </Link>
             <div className="gap-6 flex flex-col sm:w-3/5 sm:m-auto">
                 <header className="py-4 lg:hidden">
                     <img src="/images/fi_arrow-left.svg" alt="" />
@@ -95,12 +98,12 @@ const Login = () => {
                 </form>
                 <p className="link-login mt-4">
                     Belum punya akun?
-                    <a
-                        href="/register"
+                    <Link
+                        to="/register"
                         className="text-primary-darkblue04 font-bold ml-2"
                     >
                         Daftar di sini
-                    </a>
+                    </Link>
                 </p>
             </div>
         </section>

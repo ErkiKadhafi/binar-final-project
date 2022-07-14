@@ -11,7 +11,7 @@ const userState = JSON.parse(localStorage.getItem("secondhand"))
           fullName: "",
           email: "",
           type: "",
-          addres: {},
+          address: { city: "", street: "" },
           phoneNumber: "",
           imageUrl: "",
       };
@@ -34,6 +34,7 @@ export const login = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
+            data.address = { city: "", street: "" };
             // delete data.id;
 
             // keep access token and user information on local storage
@@ -63,6 +64,7 @@ export const register = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
+            data.address = { city: "", street: "" };
             // delete data.id;
 
             // keep access token and user information on local storage
@@ -96,7 +98,6 @@ export const updateProfile = createAsyncThunk(
                     "Content-Type": "multipart/form-data",
                 },
             });
-
             // remove id from response
             const data = resp.data.data;
             // delete data.id;
@@ -105,6 +106,7 @@ export const updateProfile = createAsyncThunk(
                 localStorage.getItem("secondhand")
             );
             tempLocalstorage.fullName = data.name;
+
             tempLocalstorage.address.street = data.street;
             tempLocalstorage.address.city = data.city;
             tempLocalstorage.phoneNumber = data.phoneNumber;
@@ -117,7 +119,6 @@ export const updateProfile = createAsyncThunk(
                 "secondhand",
                 JSON.stringify(tempLocalstorage)
             );
-            console.log(data);
 
             return data;
         } catch (error) {
@@ -129,6 +130,7 @@ export const updateProfile = createAsyncThunk(
                 error.toString();
             toast.dismiss();
             toast.error(message);
+            console.log(error);
             return thunkAPI.rejectWithValue();
         }
     }
@@ -150,7 +152,7 @@ const userSlice = createSlice({
 
             // because address is returned as null not empty obj
             if (payload.addres) state.address = payload.address;
-            else state.addres = {};
+            else state.addres = { city: "", street: "" };
 
             state.phoneNumber = payload.phoneNumber;
             state.imageUrl = payload.imageUrl;
@@ -167,9 +169,8 @@ const userSlice = createSlice({
 
             // because address is returned as null not empty obj
             if (payload.addres) state.address = payload.address;
-            else state.addres = {};
+            else state.addres = { city: "", street: "" };
 
-            state.address = payload.address;
             state.phoneNumber = payload.phoneNumber;
             state.imageUrl = payload.imageUrl;
         },
