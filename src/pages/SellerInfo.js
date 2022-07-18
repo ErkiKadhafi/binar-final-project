@@ -6,7 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import Navbar from "../components/Navbar";
-import { getMyOffers, rejectOffer } from "../features/product/myOffersSlice";
+import {
+    acceptOffer,
+    getMyOffers,
+    rejectOffer,
+} from "../features/product/myOffersSlice";
 import { toast } from "react-toastify";
 
 // prettier-ignore
@@ -96,7 +100,7 @@ const SellerInfo = () => {
         );
 
         toast.loading("Menerima harga nego . . .");
-        dispatch(rejectOffer({ offerId, offerStatus: "Accepted" }))
+        dispatch(acceptOffer({ offerId, offerStatus: "Accepted" }))
             .unwrap()
             .then(() => {
                 toast.dismiss();
