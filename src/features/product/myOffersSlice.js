@@ -39,7 +39,7 @@ export const getMyOffers = createAsyncThunk(
     }
 );
 export const rejectOffer = createAsyncThunk(
-    "/api/v1/offers/seller/status",
+    "/api/v1/offers/seller/status/reject",
     async (payload, thunkAPI) => {
         const { accessToken } = thunkAPI.getState().user;
         let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/status`;
@@ -71,7 +71,7 @@ export const rejectOffer = createAsyncThunk(
     }
 );
 export const acceptOffer = createAsyncThunk(
-    "/api/v1/offers/seller/status",
+    "/api/v1/offers/seller/status/accept",
     async (payload, thunkAPI) => {
         const { accessToken } = thunkAPI.getState().user;
         let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/status`;
