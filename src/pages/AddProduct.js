@@ -147,6 +147,7 @@ const AddProduct = () => {
 
                     // set data url images for previews
                     setPreviewProductImages(payload.productImages);
+                    formik.setFieldValue("images", "placeholder");
                 });
         }
     }, []);

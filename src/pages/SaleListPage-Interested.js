@@ -63,13 +63,14 @@ const SaleListPageInterested = ({ products, isLoadingMyProducts }) => {
                             </div>
                         </div>
                     ) : (
-                        <article className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <article className="w-full mt-6 md:mt-0 grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {products.map((product, index) => {
                                 return (
                                     <CardProduct
+                                        key={index}
                                         isLoading={false}
                                         product={product}
-                                        key={index}
+                                        goToOffersPage={true}
                                     />
                                 );
                             })}

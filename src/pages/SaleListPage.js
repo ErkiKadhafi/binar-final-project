@@ -40,6 +40,8 @@ const SvgDollar = ({ ...props }) => (
 );
 
 const SaleListPage = () => {
+    document.title = "My Product Page";
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {

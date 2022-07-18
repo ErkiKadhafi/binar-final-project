@@ -20,6 +20,68 @@ const initialState = {
     isLoadingPublishingProduct: false,
 };
 
+export const postNegoPrice = createAsyncThunk(
+    "/api/v1/offers/buyer/add-offers",
+    async (payload, thunkAPI) => {
+        const { accessToken } = thunkAPI.getState().user;
+        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/buyer/add-offers`;
+
+        try {
+            const resp = await axios.post(url, payload, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const { data } = resp.data;
+            console.log(data);
+
+            return data;
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
+export const getProductNegoStatus = createAsyncThunk(
+    "/api/v1/offers/seller/offer/product_id",
+    async (productId, thunkAPI) => {
+        const { accessToken } = thunkAPI.getState().user;
+        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/offer/${productId}`;
+
+        try {
+            const resp = await axios.get(url, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const { data } = resp;
+            console.log(data);
+
+            return data;
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
 export const getProductDetails = createAsyncThunk(
     "/api/v1/home/product_id",
     async (productId, thunkAPI) => {
@@ -28,7 +90,7 @@ export const getProductDetails = createAsyncThunk(
         try {
             const resp = await axios.get(url);
 
-            const { data } = resp;
+            const { data } = resp.data;
             // console.log(data);
 
             return data;
@@ -106,7 +168,7 @@ const transactionProductSlice = createSlice({
                 sold,
                 published,
             } = payload;
-
+            
             state.productId = productId;
             state.productName = productName;
             state.description = description;
