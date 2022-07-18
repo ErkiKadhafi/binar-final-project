@@ -4,6 +4,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
     getProductDetails,
+    getProductNegoStatus,
+    postNegoPrice,
     publishProduct,
 } from "../features/product/transactionProductSlice";
 
@@ -43,6 +45,8 @@ const formatRupiah = (angka) => {
 };
 
 const Product = () => {
+    document.title = "Product Page";
+
     const { id } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -62,8 +66,13 @@ const Product = () => {
         published,
         isLoadingDetailProduct,
     } = useSelector((state) => state.transactionProduct);
-    const { isAuthenticated } = useSelector((state) => state.user);
-    const { email } = useSelector((state) => state.user);
+    const { email, isAuthenticated, address, phoneNumber } = useSelector(
+        (state) => state.user
+    );
+
+    let hasCompletedProfile = false;
+    if (address.city !== "" || address.street !== "" || phoneNumber)
+        hasCompletedProfile = true;
 
     /* ======== for swiper product arrow ======== */
     const prevRef = useRef(null);
@@ -87,17 +96,30 @@ const Product = () => {
     };
 
     const formik = useFormik({
-        initialValues: { price: "" },
+        initialValues: { priceNegotiated: "" },
         validationSchema: () =>
             Yup.object().shape({
-                price: Yup.string()
+                priceNegotiated: Yup.string()
                     .required("Tolong masukkan harga nego")
                     .matches(/^[0-9]*$/, "Tolong hanya masukkan angka"),
             }),
-        onSubmit: (values) => {
-            console.log(values);
+        onSubmit: (values, { resetForm }) => {
+            values.productId = id;
+            dispatch(postNegoPrice(values))
+                .unwrap()
+                .then(() => {
+                    toast.dismiss();
+                    toast.success("Harga tawarmu berhasil dikirim ke penjual");
+                    setModalOpen(false);
+                    resetForm(formik.initialValues);
+                });
         },
     });
+
+    const handleNego = () => {
+        if (!hasCompletedProfile) navigate("/profile");
+        else setModalOpen(true);
+    };
 
     return (
         <>
@@ -128,22 +150,26 @@ const Product = () => {
                 </div>
                 <form onSubmit={formik.handleSubmit} method="POST">
                     <div className="mb-6">
-                        <label className="text-xs mb-1 block " htmlFor="price">
+                        <label
+                            className="text-xs mb-1 block "
+                            htmlFor="priceNegotiated"
+                        >
                             Harga Tawar
                         </label>
                         <Input
                             type="text"
-                            name="price"
+                            name="priceNegotiated"
                             placeholder="Rp 0.00"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.price}
+                            value={formik.values.priceNegotiated}
                         />
-                        {formik.touched.price && formik.errors.price && (
-                            <span className="text-xs text-red-500">
-                                {formik.errors.price}
-                            </span>
-                        )}
+                        {formik.touched.priceNegotiated &&
+                            formik.errors.priceNegotiated && (
+                                <span className="text-xs text-red-500">
+                                    {formik.errors.priceNegotiated}
+                                </span>
+                            )}
                     </div>
                     <Button type="submit" className="w-full">
                         Kirim
@@ -280,9 +306,7 @@ const Product = () => {
                                         {/* ======== if seller ======== */}
                                         {addedBy !== email ? (
                                             <Button
-                                                onClick={() =>
-                                                    setModalOpen(true)
-                                                }
+                                                onClick={handleNego}
                                                 className="w-full hidden md:block"
                                             >
                                                 Saya tertarik dan Ingin Nego

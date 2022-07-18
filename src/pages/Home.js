@@ -38,6 +38,8 @@ const categories = [
 ];
 
 const Home = () => {
+    document.title = "Home Page";
+
     const navigate = useNavigate();
     const location = useLocation();
 

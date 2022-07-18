@@ -1,8 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { getMyOffers, rejectOffer } from "../features/product/myOffersSlice";
+import { toast } from "react-toastify";
 
 // prettier-ignore
 const SvgWhatssap = () => (
@@ -11,9 +16,94 @@ const SvgWhatssap = () => (
 	</svg>
 )
 
+const formatRupiah = (angka) => {
+    angka = angka.toString();
+    const number_string = angka.replace(/[^\d]/g, "").toString();
+    const split = number_string.split(",");
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    // tambahkan titik jika yang di input sudah menjadi angka ribuan
+    if (ribuan) {
+        const separator = sisa ? "." : "";
+        rupiah += separator + ribuan.join(".");
+    }
+
+    rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+    return rupiah;
+};
+
+const monthList = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+];
+
 const SellerInfo = () => {
+    document.title = "My Offers";
+
+    const { id } = useParams();
+
+    const dispatch = useDispatch();
+    const { myOffers, isLoadingMyOffers } = useSelector(
+        (state) => state.myOffers
+    );
+
     const [modalAcceptNego, setModalAcceptNego] = useState(false);
+    const [dataModalAcceptNego, setDataModalAcceptNego] = useState({
+        avatarBuyer: "",
+        buyer: "",
+        cityBuyer: "",
+        productImages: [],
+        productName: "",
+        price: 0,
+        priceOffer: 0,
+    });
+
     const [modalStatus, setModalStatus] = useState(false);
+
+    useEffect(() => {
+        dispatch(getMyOffers(id));
+    }, []);
+
+    const handleReject = (e) => {
+        const offerId = e.target.getAttribute("data-offerid");
+
+        toast.loading("Menolak harga nego . . .");
+        dispatch(rejectOffer({ offerId, offerStatus: "Rejected" }))
+            .unwrap()
+            .then(() => {
+                toast.dismiss();
+                toast.success("Berhasil menolak harga nego!");
+            });
+    };
+
+    const handleAccept = (e) => {
+        const offerId = e.target.getAttribute("data-offerid");
+
+        setDataModalAcceptNego(
+            myOffers.find((offer) => offer.offerId === parseInt(offerId))
+        );
+
+        toast.loading("Menerima harga nego . . .");
+        dispatch(rejectOffer({ offerId, offerStatus: "Accepted" }))
+            .unwrap()
+            .then(() => {
+                toast.dismiss();
+                setModalAcceptNego(true);
+            });
+    };
+
     return (
         <>
             {/* ======== modal accept nego ======== */}
@@ -36,29 +126,36 @@ const SellerInfo = () => {
                     </h1>
                     <div className="flex space-x-4 mt-4">
                         <img
-                            src="/images/Rectangle 33.png"
+                            src={dataModalAcceptNego.avatarBuyer}
                             className="h-12 w-12 rounded-xl"
                             alt="product"
                         />
                         <div className="flex flex-col space-y-1">
                             <h3 className="font-medium mb-1 text-sm">
-                                Nama Pembeli
+                                {dataModalAcceptNego.buyer}
                             </h3>
                             <h3 className="text-neutral-neutral03 text-xs">
-                                Kota
+                                {dataModalAcceptNego.cityBuyer}
                             </h3>
                         </div>
                     </div>
                     <div className="flex space-x-4 mt-4">
                         <img
-                            src="/images/watch-small.png"
+                            src={dataModalAcceptNego.productImages[0]}
                             className="h-12 w-12 rounded-xl"
                             alt="product"
                         />
                         <div className="flex flex-col space-y-1">
-                            <h3 className="text-sm">Jam Tangan Casio</h3>
-                            <h3 className="text-sm line-through">Rp.250.000</h3>
-                            <h3 className="text-sm">Ditawar Rp.200.00</h3>
+                            <h3 className="text-sm">
+                                {dataModalAcceptNego.productName}{" "}
+                            </h3>
+                            <h3 className="text-sm line-through">
+                                Rp {formatRupiah(dataModalAcceptNego.price)}{" "}
+                            </h3>
+                            <h3 className="text-sm">
+                                Ditawar Rp{" "}
+                                {formatRupiah(dataModalAcceptNego.priceOffer)}
+                            </h3>
                         </div>
                     </div>
                 </div>
@@ -159,110 +256,220 @@ const SellerInfo = () => {
                     <p className="text-center font-medium mb-8 md:mb-10 md:hidden pt-1">
                         Info Penawar
                     </p>
-                    <div className="mb-6 p-4 shadow-low rounded-2xl flex items-center space-x-4 bg-white">
-                        <div>
-                            <img
-                                src="/images/Rectangle 33.png"
-                                alt="Rectangle"
-                                className="roundex-xl"
-                            />
-                        </div>
-                        <div className="">
-                            <h1 className="font-medium mb-1 text-sm">
-                                Nama Pembeli
-                            </h1>
-                            <h2 className="text-neutral-neutral03 text-xs">
-                                Kota
-                            </h2>
-                        </div>
-                    </div>
-                    <h2 className="font-medium mb-1 text-sm">
-                        Daftar Produkmu yang Ditawar
-                    </h2>
+                    {/* ======== card offers ======== */}
+                    <div className="space-y-6 pb-4">
+                        {isLoadingMyOffers ? (
+                            <div>
+                                <div className="mb-6 p-4 shadow-low rounded-2xl flex items-center space-x-4 bg-white">
+                                    <div className="h-12 w-12 rounded-xl bg-gray-300 animate-pulse" />
 
-                    {/*===============line info penawar 1======================*/}
-                    {[...Array(3)].map((item, index) => {
-                        return (
-                            <div
-                                key={index}
-                                className="mt-6 pb-4 border-b bg-white"
-                            >
-                                <div className="flex  space-x-4 ">
-                                    <div className="w-12">
-                                        <img
-                                            src="/images/watch-small.png"
-                                            alt="watch"
-                                            className="rounded-xl h-12 w-12"
-                                        />
+                                    <div className="">
+                                        <h1 className="font-medium mb-1 text-sm text-gray-300 bg-gray-300 animate-pulse">
+                                            placeholder
+                                        </h1>
+                                        <h2 className="text-xs text-gray-300 bg-gray-300 animate-pulse">
+                                            placeholder
+                                        </h2>
                                     </div>
-                                    <div className="grow">
-                                        <div className="flex justify-between mb-2 ">
-                                            <h1 className="text-neutral-neutral03 text-xs">
-                                                Penawaran produk
-                                            </h1>
-                                            <h2 className="text-neutral-neutral03 text-xs">
-                                                20 Apr,14:04
+                                </div>
+                                <h2 className="font-medium mb-1 text-sm">
+                                    Produkmu yang Ditawar
+                                </h2>
+                                {/*===============line info penawar 1======================*/}
+                                <div className="mt-6 pb-4 border-b bg-white">
+                                    <div className="flex  space-x-4 ">
+                                        <div className="w-12 h-12 rounded-xl bg-gray-300 animate-pulse" />
+                                        <div className="grow">
+                                            <div className="flex justify-between mb-2 ">
+                                                <h1 className="text-neutral-neutral03 text-xs">
+                                                    Penawaran produk
+                                                </h1>
+                                                <h2 className="text-xs text-gray-300 bg-gray-300 animate-pulse">
+                                                    date placeholder
+                                                </h2>
+                                            </div>
+                                            <h2 className="font-medium mb-2 text-sm w-max text-gray-300 bg-gray-300 animate-pulse">
+                                                product name placeholder
+                                            </h2>
+                                            <h2 className="font-medium mb-2 text-sm w-max text-gray-300 bg-gray-300 animate-pulse">
+                                                Rp placeholder
+                                            </h2>
+                                            <h2 className="font-medium mb-2 text-sm w-max text-gray-300 bg-gray-300 animate-pulse">
+                                                Ditawar Rp placeholder
                                             </h2>
                                         </div>
-                                        <h2 className="font-medium mb-2 text-sm">
-                                            Jam Tangan Casio
-                                        </h2>
-                                        <h2 className="font-medium mb-2 text-sm">
-                                            Rp.250.000
-                                        </h2>
-                                        <h2 className="font-medium mb-2 text-sm">
-                                            Ditawar Rp.200.000
-                                        </h2>
                                     </div>
                                 </div>
-                                <div className="flex items-center md:justify-end space-x-4 mt-4">
-                                    {index === 0 && (
-                                        <>
-                                            <Button
-                                                size="small"
-                                                variant="secondary"
-                                                className="grow md:grow-0 md:w-[158px] px-10"
-                                            >
-                                                Tolak
-                                            </Button>
-                                            <Button
-                                                size="small"
-                                                onClick={() =>
-                                                    setModalAcceptNego(true)
-                                                }
-                                                className="grow md:grow-0 md:w-[158px] px-10"
-                                            >
-                                                Terima
-                                            </Button>
-                                        </>
-                                    )}
-                                    {index === 1 && (
-                                        <>
-                                            <Button
-                                                size="small"
-                                                variant="secondary"
-                                                className="grow md:grow-0 md:w-[158px] px-10"
-                                                onClick={() =>
-                                                    setModalStatus(true)
-                                                }
-                                            >
-                                                Status
-                                            </Button>
-                                            <Button
-                                                size="small"
-                                                className="grow md:grow-0 md:w-[158px]"
-                                            >
-                                                <span className="mr-2.5">
-                                                    Hubungi di
-                                                </span>
-                                                <SvgWhatssap />
-                                            </Button>
-                                        </>
-                                    )}
-                                </div>
                             </div>
-                        );
-                    })}
+                        ) : (
+                            <>
+                                {myOffers.map(
+                                    (
+                                        {
+                                            offerId,
+                                            avatarBuyer,
+                                            buyer,
+                                            cityBuyer,
+                                            productImages,
+                                            productName,
+                                            price,
+                                            priceOffer,
+                                            dateCreated,
+                                            statusOffer,
+                                        },
+                                        index
+                                    ) => {
+                                        const dateParsed =
+                                            Date.parse(dateCreated);
+                                        const date = new Date(dateParsed);
+
+                                        return (
+                                            <div key={index}>
+                                                <div className="mb-6 p-4 shadow-low rounded-2xl flex items-center space-x-4 bg-white">
+                                                    <div className="h-12 w-12">
+                                                        <img
+                                                            src={avatarBuyer}
+                                                            alt="avatar"
+                                                            className="object-cover h-full w-full rounded-xl"
+                                                        />
+                                                    </div>
+                                                    <div className="">
+                                                        <h1 className="font-medium mb-1 text-sm">
+                                                            {buyer}
+                                                        </h1>
+
+                                                        <h2 className="text-neutral-neutral03 text-xs">
+                                                            {cityBuyer}
+                                                        </h2>
+                                                    </div>
+                                                </div>
+                                                <h2 className="font-medium mb-1 text-sm">
+                                                    Produkmu yang Ditawar
+                                                </h2>
+                                                <div className="mt-6 pb-4 border-b bg-white">
+                                                    <div className="flex  space-x-4 ">
+                                                        <div className="w-12">
+                                                            <img
+                                                                src={
+                                                                    productImages[0]
+                                                                }
+                                                                alt={
+                                                                    productName
+                                                                }
+                                                                className="rounded-xl h-12 w-12"
+                                                            />
+                                                        </div>
+                                                        <div className="grow">
+                                                            <div className="flex justify-between mb-2 ">
+                                                                <h1 className="text-neutral-neutral03 text-xs">
+                                                                    Penawaran
+                                                                    produk
+                                                                </h1>
+                                                                <h2 className="text-neutral-neutral03 text-xs">
+                                                                    {date.getDate()}{" "}
+                                                                    {
+                                                                        monthList[
+                                                                            date.getMonth()
+                                                                        ]
+                                                                    }
+                                                                    ,{" "}
+                                                                    {date.getHours()}
+                                                                    :
+                                                                    {date.getMinutes()}
+                                                                </h2>
+                                                            </div>
+                                                            <h2 className="font-medium mb-2 text-sm">
+                                                                {productName}
+                                                            </h2>
+                                                            <h2 className="font-medium mb-2 text-sm">
+                                                                Rp{" "}
+                                                                {formatRupiah(
+                                                                    price
+                                                                )}
+                                                            </h2>
+                                                            <h2 className="font-medium mb-2 text-sm">
+                                                                Ditawar Rp{" "}
+                                                                {formatRupiah(
+                                                                    priceOffer
+                                                                )}
+                                                            </h2>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center md:justify-end space-x-4 mt-4">
+                                                        {statusOffer ===
+                                                            "Waiting" && (
+                                                            <>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="secondary"
+                                                                    className="grow md:grow-0 md:w-[158px] px-10"
+                                                                    data-offerid={
+                                                                        offerId
+                                                                    }
+                                                                    onClick={
+                                                                        handleReject
+                                                                    }
+                                                                >
+                                                                    Tolak
+                                                                </Button>
+                                                                <Button
+                                                                    size="small"
+                                                                    data-offerid={
+                                                                        offerId
+                                                                    }
+                                                                    onClick={
+                                                                        handleAccept
+                                                                    }
+                                                                    className="grow md:grow-0 md:w-[158px] px-10"
+                                                                >
+                                                                    Terima
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                        {statusOffer ===
+                                                            "Rejected" && (
+                                                            <Button
+                                                                size="small"
+                                                                variant="secondary"
+                                                                className="grow md:grow-0 md:w-[158px] px-10"
+                                                                isDisabled={
+                                                                    true
+                                                                }
+                                                            >
+                                                                Ditolak
+                                                            </Button>
+                                                        )}
+                                                        {statusOffer ===
+                                                            "Accepted" && (
+                                                            <>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="secondary"
+                                                                    className="grow md:grow-0 md:w-[158px] px-10"
+                                                                >
+                                                                    Status
+                                                                </Button>
+                                                                <Button
+                                                                    size="small"
+                                                                    className="grow md:grow-0 md:w-[158px] px-2"
+                                                                >
+                                                                    <span className="mr-2">
+                                                                        Hubungi
+                                                                        di
+                                                                    </span>
+                                                                    <SvgWhatssap />
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
             </section>
         </>

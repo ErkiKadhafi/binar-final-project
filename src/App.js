@@ -28,11 +28,7 @@ function App() {
         } else return <Navigate to="/login" replace />;
     };
     const ContentRouteProtected = ({ children }) => {
-        if (
-            address.city !== "" ||
-            address.street !== "" ||
-            address.phoneNumber
-        ) {
+        if (address.city !== "" || address.street !== "" || phoneNumber) {
             return children;
         } else return <Navigate to="/login" replace />;
     };
@@ -98,7 +94,16 @@ function App() {
                         </ContentRoute>
                     }
                 ></Route>
-                <Route path="/seller_info" element={<SellerInfo />}></Route>
+                <Route
+                    path="/offers/:id"
+                    element={
+                        <ContentRoute>
+                            <ContentRouteProtected>
+                                <SellerInfo />
+                            </ContentRouteProtected>
+                        </ContentRoute>
+                    }
+                ></Route>
                 <Route
                     path="/list"
                     element={

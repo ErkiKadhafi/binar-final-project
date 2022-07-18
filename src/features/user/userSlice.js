@@ -34,8 +34,10 @@ export const login = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
-            data.address = { city: "", street: "" };
             // delete data.id;
+            if (!data.address) {
+                data.address = { city: "", street: "" };
+            }
 
             // keep access token and user information on local storage
             localStorage.setItem("secondhand", JSON.stringify(data));
@@ -64,7 +66,7 @@ export const register = createAsyncThunk(
 
             // remove id from response
             const data = resp.data;
-            data.address = { city: "", street: "" };
+            if (!data.address) data.address = { city: "", street: "" };
             // delete data.id;
 
             // keep access token and user information on local storage
@@ -139,10 +141,24 @@ export const updateProfile = createAsyncThunk(
 const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {},
+    reducers: {
+        logout: (state) => {
+            localStorage.removeItem("secondhand");
+            state.isAuthenticated = false;
+            state.id = "";
+            state.accessToken = "";
+            state.fullName = "";
+            state.email = "";
+            state.type = "";
+            state.address = { city: "", street: "" };
+            state.phoneNumber = "";
+            state.imageUrl = "";
+        },
+    },
     extraReducers: {
         [login.pending]: (state) => {},
         [login.fulfilled]: (state, { payload }) => {
+            console.log(payload);
             state.isAuthenticated = true;
             state.id = payload.id;
             state.accessToken = payload.accessToken;
@@ -150,9 +166,7 @@ const userSlice = createSlice({
             state.email = payload.email;
             state.type = payload.type;
 
-            // because address is returned as null not empty obj
-            if (payload.addres) state.address = payload.address;
-            else state.addres = { city: "", street: "" };
+            state.address = payload.address;
 
             state.phoneNumber = payload.phoneNumber;
             state.imageUrl = payload.imageUrl;
@@ -167,9 +181,7 @@ const userSlice = createSlice({
             state.email = payload.email;
             state.type = payload.type;
 
-            // because address is returned as null not empty obj
-            if (payload.addres) state.address = payload.address;
-            else state.addres = { city: "", street: "" };
+            state.address = payload.address;
 
             state.phoneNumber = payload.phoneNumber;
             state.imageUrl = payload.imageUrl;
@@ -188,5 +200,7 @@ const userSlice = createSlice({
         [updateProfile.rejected]: (state, action) => {},
     },
 });
+
+export const { logout } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
-import { updateProfile } from "../features/user/userSlice";
+import { logout, updateProfile } from "../features/user/userSlice";
 
 // prettier-ignore
 const SvgCamera = () => (
@@ -22,6 +22,8 @@ const SvgCamera = () => (
 )
 
 const Profile = () => {
+    document.title = "Profile Page";
+
     const { id, fullName, address, phoneNumber, imageUrl } = useSelector(
         (store) => store.user
     );
@@ -136,6 +138,10 @@ const Profile = () => {
         setSelectedRegion(
             regions.find((region) => region.provinsi === e.target.value)
         );
+    };
+    const handleLogout = () => {
+        dispatch(logout());
+        toast.error("Berhasil logout!");
     };
 
     return (
@@ -286,9 +292,19 @@ const Profile = () => {
                                     </span>
                                 )}
                         </fieldset>
-                        <Button type="submit" className="w-full mt-6">
-                            Simpan
-                        </Button>
+                        <div className="w-full mt-6 flex space-x-2">
+                            <Button
+                                type="button"
+                                className="grow"
+                                variant="secondary"
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </Button>
+                            <Button type="submit" className="grow">
+                                Simpan
+                            </Button>
+                        </div>
                     </form>
                 </div>
             </section>
