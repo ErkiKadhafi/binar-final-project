@@ -27,6 +27,20 @@ const SvgPlus = () => (
         <path d="M4.1665 10H15.8332" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 )
+// prettier-ignore
+const ChevronLeft = () => (
+    <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1427 301l-531 531 531 531q19 19 19 45t-19 45l-166 166q-19 19-45 19t-45-19l-742-742q-19-19-19-45t19-45l742-742q19-19 45-19t45 19l166 166q19 19 19 45t-19 45z">
+        </path>
+    </svg>
+)
+// prettier-ignore
+const ChevronRight = () => (
+    <svg width="9" fill="currentColor" height="8" className="" viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1363 877l-742 742q-19 19-45 19t-45-19l-166-166q-19-19-19-45t19-45l531-531-531-531q-19-19-19-45t19-45l166-166q19-19 45-19t45 19l742 742q19 19 19 45t-19 45z">
+        </path>
+    </svg>
+)
 
 const categories = [
     { id: 0, name: "Semua" },
@@ -43,9 +57,13 @@ const Home = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { totalProducts, products, isLoadingAllProducts } = useSelector(
-        (store) => store.product
-    );
+    const {
+        totalProducts,
+        totalPages,
+        currentPage,
+        products,
+        isLoadingAllProducts,
+    } = useSelector((store) => store.product);
     const dispatch = useDispatch();
     const [firstRender, setFirstRender] = useState(true);
     const [filterCategory, setFilterCategory] = useState(categories[0]);
@@ -65,6 +83,13 @@ const Home = () => {
 
         const queryParsed = queryString.parse(location.search);
 
+        /* ======== remove pagination before changing category ======== */
+        if (queryParsed.page) {
+            delete queryParsed.page;
+            const queryStringified = queryString.stringify(queryParsed);
+            location.search = queryStringified;
+        }
+
         /* ======== check if it's there is no filter ======== */
         if (filterCategory.id === 0) delete queryParsed.categoryId;
         else queryParsed.categoryId = filterCategory.id;
@@ -74,6 +99,23 @@ const Home = () => {
 
         navigate({ pathname: "/", search: location.search });
     }, [filterCategory]);
+
+    /* ======== handle change category ======== */
+    const handleCategory = (index) => {
+        setFilterCategory(categories[index]);
+    };
+
+    /* ======== handle pagination ======== */
+    const handlePagination = (pageGoTo) => {
+        const queryParsed = queryString.parse(location.search);
+
+        queryParsed.page = pageGoTo;
+
+        const queryStringified = queryString.stringify(queryParsed);
+        location.search = queryStringified;
+
+        navigate({ pathname: "/", search: location.search });
+    };
 
     return (
         <>
@@ -175,15 +217,13 @@ const Home = () => {
                                         <div className=" cursor-pointer">
                                             <div
                                                 onClick={() =>
-                                                    setFilterCategory(
-                                                        categories[index]
-                                                    )
+                                                    handleCategory(index)
                                                 }
                                                 className={`${
                                                     isSelected
                                                         ? "bg-primary-darkblue04 text-white"
                                                         : "bg-primary-darkblue01 text-black"
-                                                } flex justify-center items-center space-x-2 px-3 md:px-6 py-3 md:py-3.5 text-base rounded-xl `}
+                                                } flex justify-center items-center space-x-2 px-3 md:px-2 lg:px-6 py-3 md:py-3.5 text-base rounded-xl `}
                                             >
                                                 <SvgSearch
                                                     fill={`${
@@ -204,7 +244,7 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            <section className="font-poppins md:pt-5 pb-12">
+            <section className="font-poppins md:pt-5 pb-24">
                 {/* ======== list products ======== */}
                 <div className="container-big grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {isLoadingAllProducts ? (
@@ -240,6 +280,52 @@ const Home = () => {
                         </p>
                     )}
                 </div>
+                {/* ======== pagination ======== */}
+                {totalPages > 1 && (
+                    <div className="px-5 bg-white pt-5 flex flex-col xs:flex-row items-center xs:justify-between">
+                        <div className="flex items-center">
+                            {currentPage > 1 && (
+                                <button
+                                    type="button"
+                                    className="w-full p-4 border text-base rounded-l-xl text-gray-600 bg-white hover:bg-gray-100"
+                                    onClick={() =>
+                                        handlePagination(currentPage - 1)
+                                    }
+                                >
+                                    <ChevronLeft />
+                                </button>
+                            )}
+                            {[...Array(totalPages)].map((item, index) => {
+                                return (
+                                    <button
+                                        key={index}
+                                        type="button"
+                                        className={`${
+                                            currentPage === index + 1 &&
+                                            "text-primary-darkblue04 underline"
+                                        }  w-full px-4 py-2 border text-base bg-white hover:bg-gray-100 `}
+                                        onClick={() =>
+                                            handlePagination(index + 1)
+                                        }
+                                    >
+                                        {index + 1}
+                                    </button>
+                                );
+                            })}
+                            {currentPage < totalPages && (
+                                <button
+                                    type="button"
+                                    className="w-full p-4 border-t border-b border-r text-base  rounded-r-xl text-gray-600 bg-white hover:bg-gray-100"
+                                    onClick={() =>
+                                        handlePagination(currentPage + 1)
+                                    }
+                                >
+                                    <ChevronRight />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
             </section>
             <Button
                 onClick={() => navigate("/add_product")}

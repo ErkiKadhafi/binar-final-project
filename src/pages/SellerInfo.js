@@ -8,6 +8,7 @@ import Modal from "../components/Modal";
 import Navbar from "../components/Navbar";
 import {
     acceptOffer,
+    finishOffer,
     getMyOffers,
     rejectOffer,
 } from "../features/product/myOffersSlice";
@@ -108,6 +109,42 @@ const SellerInfo = () => {
             });
     };
 
+    /* ======== for change status form modal ======== */
+    const [isProductSold, setIsProductSold] = useState(true);
+    const [offerIdStatus, setOfferIdStatus] = useState(-1);
+    const handleStatus = (e) => {
+        const offerId = e.target.getAttribute("data-offerid");
+
+        setOfferIdStatus(offerId);
+        setModalStatus(true);
+    };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!isProductSold) {
+            toast.loading("Menolak harga nego . . .");
+            dispatch(
+                rejectOffer({ offerId: offerIdStatus, offerStatus: "Rejected" })
+            )
+                .unwrap()
+                .then(() => {
+                    toast.dismiss();
+                    toast.success("Berhasil menolak harga nego!");
+                    setModalStatus(false);
+                    setIsProductSold(false);
+                });
+        } else {
+            toast.loading("Memperbarui status . . .");
+            dispatch(finishOffer(offerIdStatus))
+                .unwrap()
+                .then(() => {
+                    toast.dismiss();
+                    toast.success("Status produk berhasil diperbarui");
+                    setModalStatus(false);
+                    setIsProductSold(false);
+                });
+        }
+    };
+
     return (
         <>
             {/* ======== modal accept nego ======== */}
@@ -189,13 +226,16 @@ const SellerInfo = () => {
                 <h1 className="text-sm font-medium mb-6">
                     Perbarui status penjualan produkmu
                 </h1>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-10 md:mb-8 space-y-6">
                         <div className="flex space-x-4">
                             <input
                                 name="status"
                                 type="radio"
                                 id="berhasil_terjual"
+                                value={true}
+                                checked={isProductSold}
+                                onChange={() => setIsProductSold(true)}
                                 className="h-4 w-4 bg-[#C4C4C4] border-none checked:bg-gray-400 text-[#C4C4C4] checked:ring-0 checked:ring-offset-0 transition "
                             />
                             <label
@@ -216,6 +256,9 @@ const SellerInfo = () => {
                                 name="status"
                                 type="radio"
                                 id="batalkan_transaksi"
+                                value={false}
+                                checked={!isProductSold}
+                                onChange={() => setIsProductSold(false)}
                                 className="h-4 w-4 bg-[#C4C4C4] border-none checked:bg-gray-400 text-[#C4C4C4] checked:ring-0 checked:ring-offset-0 transition "
                             />
                             <label
@@ -232,10 +275,7 @@ const SellerInfo = () => {
                             </label>
                         </div>
                     </div>
-                    {/* <Button isDisabled={true} disabled className="w-full">
-                        kirim
-                    </Button> */}
-                    <Button disabled className="w-full">
+                    <Button type="submit" className="w-full">
                         kirim
                     </Button>
                 </form>
@@ -248,7 +288,7 @@ const SellerInfo = () => {
             <section className="font-poppins pt-5 md:pt-10">
                 <div className="container-small relative">
                     <Link
-                        to="/"
+                        to="/list?list=Diminati"
                         className="absolute md:-left-76px block w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300 transition"
                     >
                         {/* prettier-ignore  */}
@@ -450,6 +490,12 @@ const SellerInfo = () => {
                                                                     size="small"
                                                                     variant="secondary"
                                                                     className="grow md:grow-0 md:w-[158px] px-10"
+                                                                    data-offerid={
+                                                                        offerId
+                                                                    }
+                                                                    onClick={
+                                                                        handleStatus
+                                                                    }
                                                                 >
                                                                     Status
                                                                 </Button>

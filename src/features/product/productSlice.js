@@ -31,11 +31,11 @@ export const getAllProducts = createAsyncThunk(
                 error.toString();
             toast.dismiss();
             toast.error(message);
+            console.log(message);
             return thunkAPI.rejectWithValue();
         }
     }
 );
-
 export const addProduct = createAsyncThunk(
     "api/v1/product/add",
     async (payload, thunkAPI) => {
