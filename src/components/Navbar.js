@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navigate, useLocation, useNavigate } from "react-router";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import Button from "./Button";
 
 import queryString from "query-string";
+import {
+    getNotification,
+    readNotification,
+} from "../features/notification/notificationSlice";
 
 // prettier-ignore
 const Svglogoungu = ({className}) => (
@@ -70,6 +74,24 @@ const SvgBell = ({className, onClick}) => (
     </svg>
 )
 
+const formatRupiah = (angka) => {
+    angka = angka.toString();
+    const number_string = angka.replace(/[^\d]/g, "").toString();
+    const split = number_string.split(",");
+    const sisa = split[0].length % 3;
+    let rupiah = split[0].substr(0, sisa);
+    let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+    // tambahkan titik jika yang di input sudah menjadi angka ribuan
+    if (ribuan) {
+        const separator = sisa ? "." : "";
+        rupiah += separator + ribuan.join(".");
+    }
+
+    rupiah = split[1] != undefined ? rupiah + "," + split[1] : rupiah;
+    return rupiah;
+};
+
 function Navbar({
     showOnMobile = true,
     showSearchInput = true,
@@ -128,6 +150,17 @@ function Navbar({
         }, 500);
         return () => clearTimeout(timeOutId);
     }, [filterSearch]);
+
+    // fetch notification everytime user change url
+    const dispatch = useDispatch();
+    const { notifications, isLoadingNotification, hasNewNotification } =
+        useSelector((state) => state.notification);
+    useEffect(() => {
+        dispatch(getNotification());
+    }, [location]);
+    const handleReadNotification = (notifId) => {
+        dispatch(readNotification({ notifId }));
+    };
 
     return (
         <>
@@ -225,7 +258,7 @@ function Navbar({
                                             } hover:stroke-primary-darkblue04 transition`}
                                         />
                                         {/* ======== red dots on the bell ======== */}
-                                        {showNewNotification && (
+                                        {hasNewNotification && (
                                             <div className="h-2 w-2 rounded-full bg-alert-danger absolute top-0 right-0" />
                                         )}
                                         {/* ======== popup notification ======== */}
@@ -234,56 +267,98 @@ function Navbar({
                                                 showPopupNotification
                                                     ? "visible opacity-1"
                                                     : "invisible opacity-0"
-                                            } transition-all absolute shadow-high w-[376px] top-10 -right-7 px-6 py-2 divide-y divide-[#E5E5E5] rounded-2xl bg-white`}
+                                            } transition-all absolute shadow-high w-[376px] max-h-[265px] top-10 -right-7 px-6 py-2 overflow-y-scroll divide-y divide-[#E5E5E5] rounded-2xl bg-white`}
                                         >
-                                            {Array.from([1, 2, 3], (index) => {
-                                                return (
-                                                    <div
-                                                        onClick={() =>
-                                                            setShowNewNotification(
-                                                                false
-                                                            )
-                                                        }
-                                                        key={index}
-                                                        className="flex space-x-4 py-4"
+                                            {isLoadingNotification ? (
+                                                <div className="flex items-center justify-center h-[265px]">
+                                                    <svg
+                                                        role="status"
+                                                        className="h-8 w-8 animate-spin mr-2 text-gray-200 fill-gray-600"
+                                                        viewBox="0 0 100 101"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
                                                     >
-                                                        <img
-                                                            src="./images/watch-small.png"
-                                                            alt=""
-                                                            className="h-max"
+                                                        <path
+                                                            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                                            fill="currentColor"
                                                         />
-                                                        <div className="space-y-1 grow">
-                                                            <div className="flex justify-between items-center">
-                                                                <p className="text-xs text-neutral-neutral03">
-                                                                    Penawaran
-                                                                    produk
-                                                                </p>
-                                                                <div className="flex items-center space-x-2">
-                                                                    {/* prettier-ignore  */}
-                                                                    <p className="text-xs text-neutral-neutral03">
-                                                                        20 Apr,14:04
-                                                                    </p>
-                                                                    {showNewNotification && (
-                                                                        <div className="rounded-full bg-alert-danger h-2 w-2 " />
-                                                                    )}
+                                                        <path
+                                                            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                                            fill="currentFill"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {notifications.map(
+                                                        (
+                                                            notification,
+                                                            index
+                                                        ) => {
+                                                            return (
+                                                                <div
+                                                                    onClick={() => {
+                                                                        if (
+                                                                            !notification.isRead
+                                                                        )
+                                                                            handleReadNotification(
+                                                                                notification.notifId
+                                                                            );
+                                                                    }}
+                                                                    key={index}
+                                                                    className="flex space-x-4 py-4"
+                                                                >
+                                                                    <div className="h-12 w-12">
+                                                                        <img
+                                                                            src={
+                                                                                notification.url
+                                                                            }
+                                                                            alt=""
+                                                                            className="object-cover h-full rounded-xl"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="space-y-1 grow">
+                                                                        <div className="flex justify-between items-center">
+                                                                            <p className="text-xs text-neutral-neutral03">
+                                                                                {
+                                                                                    notification.title
+                                                                                }
+                                                                            </p>
+                                                                            <div className="flex items-center space-x-2">
+                                                                                {/* prettier-ignore  */}
+                                                                                <p className="text-xs text-neutral-neutral03">
+                                                                                    20 Apr,14:04
+                                                                                </p>
+                                                                                {!notification.isRead && (
+                                                                                    <div className="rounded-full bg-alert-danger h-2 w-2 " />
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                        {/* prettier-ignore  */}
+                                                                        <p className="text-sm">
+                                                                            {notification.productName}
+                                                                        </p>
+                                                                        {/* prettier-ignore  */}
+                                                                        <p className="text-sm">
+                                                                            Rp {formatRupiah(notification.price)}
+                                                                        </p>
+                                                                        {/* prettier-ignore  */}
+                                                                        {notification.offerNegotiated && (
+                                                                            <p className="text-sm">
+                                                                                Ditawar
+                                                                                Rp
+                                                                                {formatRupiah(
+                                                                                    notification.offerNegotiated
+                                                                                )}
+                                                                            </p>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            {/* prettier-ignore  */}
-                                                            <p className="text-sm">
-                                                                Jam Tangan Casio
-                                                            </p>
-                                                            {/* prettier-ignore  */}
-                                                            <p className="text-sm">
-                                                                Rp 250.000
-                                                            </p>
-                                                            {/* prettier-ignore  */}
-                                                            <p className="text-sm">
-                                                                Ditawar Rp 200.000
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
+                                                            );
+                                                        }
+                                                    )}
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <Link to="/profile">
