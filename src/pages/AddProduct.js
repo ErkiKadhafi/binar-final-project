@@ -31,7 +31,9 @@ const AddProduct = () => {
     const handleChangeCategory = (e) => {
         // console.log(e.target.value);
         setSelectedCategory(
-            categories.find((category) => category.value === e.target.value)
+            categories.find(
+                (category) => category.value === parseInt(e.target.value)
+            )
         );
         formik.setFieldValue("categoryId", e.target.value);
     };

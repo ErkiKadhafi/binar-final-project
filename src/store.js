@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import notificationSlice from "./features/notification/notificationSlice";
 import myOffersSlice from "./features/product/myOffersSlice";
 import myProductSlice from "./features/product/myProductSlice";
 import productSlice from "./features/product/productSlice";
@@ -12,5 +13,6 @@ export const store = configureStore({
         myProduct: myProductSlice,
         transactionProduct: transactionProductSlice,
         myOffers: myOffersSlice,
+        notification: notificationSlice,
     },
 });

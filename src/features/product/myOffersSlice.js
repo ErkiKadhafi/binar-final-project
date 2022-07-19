@@ -8,10 +8,10 @@ const initialState = {
 };
 
 export const getMyOffers = createAsyncThunk(
-    "/api/v1/offers/seller/offer/product_id",
+    "/api/v1/offers/seller/product/product_id",
     async (productId, thunkAPI) => {
         const { accessToken } = thunkAPI.getState().user;
-        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/offer/${productId}`;
+        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/product/${productId}`;
 
         try {
             const resp = await axios.get(url, {
@@ -22,7 +22,7 @@ export const getMyOffers = createAsyncThunk(
             });
 
             const { data } = resp.data;
-            console.log(data);
+            // console.log(data);
 
             return data;
         } catch (error) {
@@ -102,6 +102,38 @@ export const acceptOffer = createAsyncThunk(
         }
     }
 );
+export const finishOffer = createAsyncThunk(
+    "/api/v1/offers/seller/update-product/offer_id",
+    async (offerId, thunkAPI) => {
+        const { accessToken } = thunkAPI.getState().user;
+        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/offers/seller/update-product/${offerId}`;
+        const payload = { offerId };
+
+        try {
+            const resp = await axios.put(url, payload, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const { data } = resp.data;
+            // console.log(data);
+
+            return { offerId: parseInt(data) };
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
 
 const myOffersSlice = createSlice({
     name: "myOffers",
@@ -136,6 +168,14 @@ const myOffersSlice = createSlice({
             updatedState.statusOffer = "Accepted";
         },
         [acceptOffer.rejected]: (state, { payload }) => {},
+        [finishOffer.pending]: (state, { payload }) => {},
+        [finishOffer.fulfilled]: (state, { payload }) => {
+            const updatedState = state.myOffers.find(
+                (offer) => offer.offerId === payload.offerId
+            );
+            updatedState.statusOffer = "Done";
+        },
+        [finishOffer.rejected]: (state, { payload }) => {},
     },
 });
 

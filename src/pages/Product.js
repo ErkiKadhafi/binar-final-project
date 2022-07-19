@@ -403,14 +403,20 @@ const Product = () => {
                     {/* ======== if u want to nego ======== */}
                     {addedBy !== email ? (
                         <Button
-                            onClick={() => setModalOpen(true)}
+                            onClick={handleNego}
                             className="w-[90%] left-1/2 transform -translate-x-1/2 fixed bottom-8 md:hidden"
                         >
                             Saya tertarik dan Ingin Nego
                         </Button>
                     ) : (
                         <div className="w-[90%] left-[5%] fixed bottom-8 md:hidden flex space-x-4">
-                            <Button variant="secondary" className="w-full">
+                            <Button
+                                onClick={() =>
+                                    navigate(`/edit_product/${productId}`)
+                                }
+                                variant="secondary"
+                                className="w-full"
+                            >
                                 Edit
                             </Button>
                             {!published && (
