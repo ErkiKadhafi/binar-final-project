@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import {
+    deleteProduct,
     getProductDetails,
     getProductNegoStatus,
     postNegoPrice,
@@ -65,6 +66,7 @@ const Product = () => {
         sold,
         published,
         isLoadingDetailProduct,
+        negotiationStatus,
     } = useSelector((state) => state.transactionProduct);
     const { email, isAuthenticated, address, phoneNumber } = useSelector(
         (state) => state.user
@@ -119,6 +121,17 @@ const Product = () => {
     const handleNego = () => {
         if (!hasCompletedProfile) navigate("/profile");
         else setModalOpen(true);
+    };
+
+    const handleDelete = () => {
+        toast.loading("Menghapus produk . . .");
+        dispatch(deleteProduct(id))
+            .unwrap()
+            .then(() => {
+                toast.dismiss();
+                toast.success("Berhasil menghapus produk");
+                navigate("/list");
+            });
     };
 
     return (
@@ -305,15 +318,28 @@ const Product = () => {
                                     <div className="md:space-y-3.5 md:mt-6">
                                         {/* ======== if seller ======== */}
                                         {addedBy !== email ? (
-                                            <Button
-                                                onClick={handleNego}
-                                                className="w-full hidden md:block"
-                                            >
-                                                Saya tertarik dan Ingin Nego
-                                            </Button>
+                                            <>
+                                                {negotiationStatus ===
+                                                "Waiting" ? (
+                                                    <Button
+                                                        isDisabled={true}
+                                                        className="w-full hidden md:block"
+                                                    >
+                                                        Menunggu respon penjual
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        onClick={handleNego}
+                                                        className="w-full hidden md:block"
+                                                    >
+                                                        Saya tertarik dan Ingin
+                                                        Nego
+                                                    </Button>
+                                                )}
+                                            </>
                                         ) : (
                                             <>
-                                                {!published && (
+                                                {/* {!published && (
                                                     <Button
                                                         type="button"
                                                         onClick={
@@ -323,18 +349,39 @@ const Product = () => {
                                                     >
                                                         Terbitkan
                                                     </Button>
+                                                )} */}
+                                                {!sold ? (
+                                                    <>
+                                                        <Button
+                                                            type="button"
+                                                            onClick={
+                                                                handleDelete
+                                                            }
+                                                            className="w-full hidden md:block"
+                                                        >
+                                                            Hapus
+                                                        </Button>
+                                                        <Button
+                                                            variant="secondary"
+                                                            onClick={() =>
+                                                                navigate(
+                                                                    `/edit_product/${productId}`
+                                                                )
+                                                            }
+                                                            className="w-full hidden md:block"
+                                                        >
+                                                            Edit
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <Button
+                                                        isDisabled={true}
+                                                        variant="secondary"
+                                                        className="w-full hidden md:block"
+                                                    >
+                                                        Terjual
+                                                    </Button>
                                                 )}
-                                                <Button
-                                                    variant="secondary"
-                                                    onClick={() =>
-                                                        navigate(
-                                                            `/edit_product/${productId}`
-                                                        )
-                                                    }
-                                                    className="w-full hidden md:block"
-                                                >
-                                                    Edit
-                                                </Button>
                                             </>
                                         )}
                                     </div>
@@ -410,16 +457,26 @@ const Product = () => {
                         </Button>
                     ) : (
                         <div className="w-[90%] left-[5%] fixed bottom-8 md:hidden flex space-x-4">
-                            <Button
-                                onClick={() =>
-                                    navigate(`/edit_product/${productId}`)
-                                }
-                                variant="secondary"
-                                className="w-full"
-                            >
-                                Edit
-                            </Button>
-                            {!published && (
+                            {!sold ? (
+                                <Button
+                                    onClick={() =>
+                                        navigate(`/edit_product/${productId}`)
+                                    }
+                                    variant="secondary"
+                                    className="w-full"
+                                >
+                                    Edit
+                                </Button>
+                            ) : (
+                                <Button
+                                    isDisabled={true}
+                                    variant="secondary"
+                                    className="w-full"
+                                >
+                                    Terjual
+                                </Button>
+                            )}
+                            {/* {!published && (
                                 <Button
                                     type="button"
                                     onClick={publishNewProduct}
@@ -427,7 +484,7 @@ const Product = () => {
                                 >
                                     Terbitkan
                                 </Button>
-                            )}
+                            )} */}
                         </div>
                     )}
                 </>

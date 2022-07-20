@@ -114,7 +114,16 @@ function App() {
                         </ContentRoute>
                     }
                 ></Route>
-                <Route path="/notification" element={<Notification />}></Route>
+                <Route
+                    path="/notification"
+                    element={
+                        <ContentRoute>
+                            <ContentRouteProtected>
+                                <Notification />
+                            </ContentRouteProtected>
+                        </ContentRoute>
+                    }
+                ></Route>
             </Routes>
         </BrowserRouter>
     );

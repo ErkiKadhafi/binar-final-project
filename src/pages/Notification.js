@@ -39,6 +39,21 @@ const formatRupiah = (angka) => {
     return rupiah;
 };
 
+const monthList = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+];
+
 const Notification = () => {
     document.title = "Notification";
 
@@ -74,7 +89,10 @@ const Notification = () => {
                     {isLoadingNotification ? (
                         <>
                             {[...Array(3)].map((item, index) => (
-                                <div className="flex space-x-4 py-4">
+                                <div
+                                    key={index}
+                                    className="flex space-x-4 py-4"
+                                >
                                     {/* ======== item image ======== */}
                                     <div className="h-12 w-12 rounded-xl bg-gray-300 animate-pulse" />
                                     {/* ======== item details ======== */}
@@ -101,61 +119,90 @@ const Notification = () => {
                         </>
                     ) : (
                         <>
-                            {notifications.map((notification, index) => {
-                                return (
-                                    <div
-                                        onClick={() => {
-                                            if (!notification.isRead)
-                                                handleReadNotification(
-                                                    notification.notifId
-                                                );
-                                        }}
-                                        key={index}
-                                        className="flex space-x-4 py-4"
-                                    >
-                                        <div className="h-12 w-12">
-                                            <img
-                                                src={notification.url}
-                                                alt=""
-                                                className="object-cover h-full rounded-xl"
-                                            />
-                                        </div>
-                                        <div className="space-y-1 grow">
-                                            <div className="flex justify-between items-center">
-                                                <p className="text-xs text-neutral-neutral03">
-                                                    {notification.title}
-                                                </p>
-                                                <div className="flex items-center space-x-2">
-                                                    {/* prettier-ignore  */}
-                                                    <p className="text-xs text-neutral-neutral03">
-                                                                                    20 Apr,14:04
-                                                                                </p>
-                                                    {!notification.isRead && (
-                                                        <div className="rounded-full bg-alert-danger h-2 w-2 " />
-                                                    )}
+                            {notifications.length === 0 ? (
+                                <div className="pt-8 text-center text-lg">
+                                    Tidak ada notifikasi baru
+                                </div>
+                            ) : (
+                                <>
+                                    {notifications.map(
+                                        (notification, index) => {
+                                            const dateParsed = Date.parse(
+                                                notification.createdDate
+                                            );
+                                            const date = new Date(dateParsed);
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    onClick={() => {
+                                                        if (
+                                                            !notification.isRead
+                                                        )
+                                                            handleReadNotification(
+                                                                notification.notifId
+                                                            );
+                                                    }}
+                                                    className="flex space-x-4 py-4"
+                                                >
+                                                    <div className="h-12 w-12">
+                                                        <img
+                                                            src={
+                                                                notification.url
+                                                            }
+                                                            alt=""
+                                                            className="object-cover h-full rounded-xl"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1 grow">
+                                                        <div className="flex justify-between items-center">
+                                                            <p className="text-xs text-neutral-neutral03">
+                                                                {
+                                                                    notification.title
+                                                                }
+                                                            </p>
+                                                            <div className="flex items-center space-x-2">
+                                                                {/* prettier-ignore  */}
+                                                                <p className="text-xs text-neutral-neutral03">
+                                                                    {date.getDate()}{" "}
+                                                                    {
+                                                                        monthList[
+                                                                            date.getMonth()
+                                                                        ]
+                                                                    }
+                                                                    ,{" "}
+                                                                    {date.getHours()}
+                                                                    :
+                                                                    {date.getMinutes()}
+                                                                </p>
+                                                                {!notification.isRead && (
+                                                                    <div className="rounded-full bg-alert-danger h-2 w-2 " />
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {/* prettier-ignore  */}
+                                                        <p className="text-sm">
+                                                            {notification.productName}
+                                                        </p>
+                                                        {/* prettier-ignore  */}
+                                                        <p className="text-sm">
+                                                            Rp {formatRupiah(notification.price)}
+                                                        </p>
+                                                        {/* prettier-ignore  */}
+                                                        {notification.offerNegotiated && (
+                                                            <p className="text-sm">
+                                                                Ditawar Rp
+                                                                {formatRupiah(
+                                                                    notification.offerNegotiated
+                                                                )}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            {/* prettier-ignore  */}
-                                            <p className="text-sm">
-                                                                            {notification.productName}
-                                                                        </p>
-                                            {/* prettier-ignore  */}
-                                            <p className="text-sm">
-                                                                            Rp {formatRupiah(notification.price)}
-                                                                        </p>
-                                            {/* prettier-ignore  */}
-                                            {notification.offerNegotiated && (
-                                                <p className="text-sm">
-                                                    Ditawar Rp
-                                                    {formatRupiah(
-                                                        notification.offerNegotiated
-                                                    )}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                            );
+                                        }
+                                    )}
+                                </>
+                            )}
                         </>
                     )}
                 </div>

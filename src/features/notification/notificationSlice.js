@@ -23,7 +23,7 @@ export const getNotification = createAsyncThunk(
             });
 
             const data = resp.data;
-            console.log(data);
+            // console.log(data);
 
             return data;
         } catch (error) {

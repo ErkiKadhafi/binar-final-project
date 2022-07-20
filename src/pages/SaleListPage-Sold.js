@@ -51,7 +51,7 @@ const SaleListPageSold = ({ products, isLoadingMyProducts }) => {
             ) : (
                 <>
                     {products.length === 0 ? (
-                        <div className="w-full font-poppins">
+                        <div className="w-full mt-6  font-poppins">
                             <div className="pt-20 md:pt-0 w-[296px] mx-auto flex flex-col justify-center items-center text-center">
                                 <div className="w-[172px] md:w-auto -translate-x-1/4 md:translate-x-0">
                                     <SvgVector />
@@ -63,7 +63,7 @@ const SaleListPageSold = ({ products, isLoadingMyProducts }) => {
                             </div>
                         </div>
                     ) : (
-                        <article className="w-full grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <article className="w-full mt-6  grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {products.map((product, index) => {
                                 return (
                                     <CardProduct

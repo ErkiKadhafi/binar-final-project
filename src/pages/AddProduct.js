@@ -21,10 +21,14 @@ const categories = [
 ];
 
 const AddProduct = () => {
+    const location = useLocation();
+    if (location.pathname.includes("edit_product"))
+        document.title = "Edit Product";
+    else document.title = "Add Product";
+
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
 
     /* ======== for changing categories ======== */
     const [selectedCategory, setSelectedCategory] = useState(categories[0]);
@@ -93,9 +97,9 @@ const AddProduct = () => {
             price: Yup.string()
                 .required("Tolong masukkan harga produk")
                 .matches(/^[0-9]*$/, "Tolong hanya masukkan angka"),
-            description: Yup.string().required(
-                "Tolong masukkan deskripsi produk"
-            ),
+            description: Yup.string()
+                .required("Tolong masukkan deskripsi produk")
+                .max(300, "Batas maksimum deskripsi adalah 300 karakter"),
             images: Yup.string().required(
                 "Tolong masukkan gambar produk (Maks 4)"
             ),
@@ -115,9 +119,21 @@ const AddProduct = () => {
             [...Array(values.images.length)].forEach((item, index) => {
                 formData.append("images", values.images[index]);
             });
+
             if (location.pathname.includes("edit_product")) {
-                dispatch(updateProduct(formData));
-                console.log(values);
+                formData.append("productId", id);
+
+                if (values.images === "placeholder")
+                    formData.set("images", null);
+
+                toast.loading("Memperbarui detail produk . . .");
+                dispatch(updateProduct(formData))
+                    .unwrap()
+                    .then(() => {
+                        toast.dismiss();
+                        toast.success("Berhasil memperbarui detail produk!");
+                        navigate("/list");
+                    });
             } else {
                 toast.loading("Menambahkan produk . . .");
                 dispatch(addProduct(formData))
@@ -321,7 +337,9 @@ const AddProduct = () => {
                                 Preview
                             </Button>
                             <Button type="submit" className="w-64 ">
-                                Tambah ke Daftar Jual
+                                {location.pathname.includes("edit_product")
+                                    ? "Perbarui"
+                                    : "Terbitkan"}
                             </Button>
                         </div>
                     </form>

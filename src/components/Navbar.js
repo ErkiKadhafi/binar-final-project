@@ -74,6 +74,21 @@ const SvgBell = ({className, onClick}) => (
     </svg>
 )
 
+const monthList = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+];
+
 const formatRupiah = (angka) => {
     angka = angka.toString();
     const number_string = angka.replace(/[^\d]/g, "").toString();
@@ -177,8 +192,14 @@ function Navbar({
                 <div className="container-big flex items-center font-poppins">
                     <div className="flex items-center w-full">
                         {/* ======== show on desktop ======== */}
-                        <Link to="/">
-                            <Svglogoungu className="hidden md:block" />
+                        <Link
+                            to="/"
+                            className="hidden md:block py-1 px-4 rounded-xl border-2 border-primary-darkblue04"
+                        >
+                            <h1 className="text-xl font-bold text-primary-darkblue04 underline">
+                                GENTZ
+                            </h1>
+                            {/* <img src="./images/logo.png" alt="logo" /> */}
                         </Link>
                         {/* ======== show on mobile ======== */}
                         <button
@@ -290,72 +311,101 @@ function Navbar({
                                                 </div>
                                             ) : (
                                                 <>
-                                                    {notifications.map(
-                                                        (
-                                                            notification,
-                                                            index
-                                                        ) => {
-                                                            return (
-                                                                <div
-                                                                    onClick={() => {
-                                                                        if (
-                                                                            !notification.isRead
-                                                                        )
-                                                                            handleReadNotification(
-                                                                                notification.notifId
-                                                                            );
-                                                                    }}
-                                                                    key={index}
-                                                                    className="flex space-x-4 py-4"
-                                                                >
-                                                                    <div className="h-12 w-12">
-                                                                        <img
-                                                                            src={
-                                                                                notification.url
+                                                    {notifications.length ===
+                                                    0 ? (
+                                                        <div className="py-4">
+                                                            Tidak ada notifikasi
+                                                            baru
+                                                        </div>
+                                                    ) : (
+                                                        <>
+                                                            {notifications.map(
+                                                                (
+                                                                    notification,
+                                                                    index
+                                                                ) => {
+                                                                    const dateParsed =
+                                                                        Date.parse(
+                                                                            notification.createdDate
+                                                                        );
+                                                                    const date =
+                                                                        new Date(
+                                                                            dateParsed
+                                                                        );
+                                                                    return (
+                                                                        <div
+                                                                            onClick={() => {
+                                                                                if (
+                                                                                    !notification.isRead
+                                                                                )
+                                                                                    handleReadNotification(
+                                                                                        notification.notifId
+                                                                                    );
+                                                                            }}
+                                                                            key={
+                                                                                index
                                                                             }
-                                                                            alt=""
-                                                                            className="object-cover h-full rounded-xl"
-                                                                        />
-                                                                    </div>
-                                                                    <div className="space-y-1 grow">
-                                                                        <div className="flex justify-between items-center">
-                                                                            <p className="text-xs text-neutral-neutral03">
-                                                                                {
-                                                                                    notification.title
-                                                                                }
-                                                                            </p>
-                                                                            <div className="flex items-center space-x-2">
+                                                                            className="flex space-x-4 py-4"
+                                                                        >
+                                                                            <div className="h-12 w-12">
+                                                                                <img
+                                                                                    src={
+                                                                                        notification.url
+                                                                                    }
+                                                                                    alt=""
+                                                                                    className="object-cover h-full rounded-xl"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="space-y-1 grow">
+                                                                                <div className="flex justify-between items-center">
+                                                                                    <p className="text-xs text-neutral-neutral03">
+                                                                                        {
+                                                                                            notification.title
+                                                                                        }
+                                                                                    </p>
+                                                                                    <div className="flex items-center space-x-2">
+                                                                                        {/* prettier-ignore  */}
+                                                                                        <p className="text-xs text-neutral-neutral03">
+                                                                                            {date.getDate()}{" "}
+                                                                                            {
+                                                                                                monthList[
+                                                                                                    date.getMonth()
+                                                                                                ]
+                                                                                            }
+                                                                                            ,{" "}
+                                                                                            {date.getHours()}
+                                                                                            :
+                                                                                            {date.getMinutes()}
+                                                                                        </p>
+                                                                                        {!notification.isRead && (
+                                                                                            <div className="rounded-full bg-alert-danger h-2 w-2 " />
+                                                                                        )}
+                                                                                    </div>
+                                                                                </div>
                                                                                 {/* prettier-ignore  */}
-                                                                                <p className="text-xs text-neutral-neutral03">
-                                                                                    20 Apr,14:04
-                                                                                </p>
-                                                                                {!notification.isRead && (
-                                                                                    <div className="rounded-full bg-alert-danger h-2 w-2 " />
+                                                                                <p className="text-sm">
+                                                                            {notification.productName}
+                                                                        </p>
+                                                                                {/* prettier-ignore  */}
+                                                                                <p className="text-sm">
+                                                                            Rp {formatRupiah(notification.price)}
+                                                                        </p>
+                                                                                {/* prettier-ignore  */}
+                                                                                {notification.offerNegotiated && (
+                                                                                    <p className="text-sm">
+                                                                                        Ditawar
+                                                                                        Rp
+                                                                                        {formatRupiah(
+                                                                                            notification.offerNegotiated
+                                                                                        )}
+                                                                                    </p>
                                                                                 )}
                                                                             </div>
                                                                         </div>
-                                                                        {/* prettier-ignore  */}
-                                                                        <p className="text-sm">
-                                                                            {notification.productName}
-                                                                        </p>
-                                                                        {/* prettier-ignore  */}
-                                                                        <p className="text-sm">
-                                                                            Rp {formatRupiah(notification.price)}
-                                                                        </p>
-                                                                        {/* prettier-ignore  */}
-                                                                        {notification.offerNegotiated && (
-                                                                            <p className="text-sm">
-                                                                                Ditawar
-                                                                                Rp
-                                                                                {formatRupiah(
-                                                                                    notification.offerNegotiated
-                                                                                )}
-                                                                            </p>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        }
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </>
                                                     )}
                                                 </>
                                             )}
@@ -396,7 +446,9 @@ function Navbar({
                     } transition-all duration-500 font-poppins bg-white h-full w-1/2 z-50 py-[34px] pl-4 pr-6`}
                 >
                     <div className="flex items-center justify-between mb-[18px]">
-                        <h1 className="font-bold">Second Hand</h1>
+                        <Link to="/">
+                            <h1 className="font-bold">GENTZ</h1>
+                        </Link>
                         <button
                             type="button"
                             onClick={() => setSidebarOpen(false)}
