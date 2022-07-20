@@ -71,37 +71,39 @@ export const addProduct = createAsyncThunk(
     }
 );
 export const updateProduct = createAsyncThunk(
-    "api/v1/product/add",
+    "api/v1/products/update",
     async (payload, thunkAPI) => {
         const { accessToken } = thunkAPI.getState().user;
 
-        console.log(payload);
-
-        // const url = `${process.env.REACT_APP_BASE_URL}/api/v1/products/add`;
-        // console.log(url);
-        // try {
-        //     const resp = await axios.post(url, payload, {
-        //         headers: {
-        //             Authorization: "Bearer " + accessToken,
-        //             "Content-Type": "multipart/form-data",
-        //         },
-        //     });
-
-        //     const data = resp.data.data;
-        //     console.log(data);
-
-        //     return data;
-        // } catch (error) {
-        //     const message =
-        //         (error.response &&
-        //             error.response.data &&
-        //             error.response.data.message) ||
-        //         error.message ||
-        //         error.toString();
-        //     toast.dismiss();
-        //     toast.error(message);
-        //     return thunkAPI.rejectWithValue();
+        // for (const pair of payload.entries()) {
+        //     console.log(`${pair[0]}, ${pair[1]}`);
         // }
+
+        const url = `${process.env.REACT_APP_BASE_URL}/api/v1/products/update`;
+ 
+        try {
+            const resp = await axios.put(url, payload, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const data = resp.data.data;
+            // console.log(data);
+
+            return data;
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
     }
 );
 

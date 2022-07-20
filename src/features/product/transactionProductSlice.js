@@ -16,6 +16,7 @@ const initialState = {
     productImages: [],
     sold: false,
     published: false,
+    negotiationStatus: "Available",
     isLoadingDetailProduct: false,
     isLoadingPublishingProduct: false,
 };
@@ -35,7 +36,7 @@ export const postNegoPrice = createAsyncThunk(
             });
 
             const { data } = resp.data;
-            console.log(data);
+            console.log(resp);
 
             return data;
         } catch (error) {
@@ -88,10 +89,25 @@ export const getProductDetails = createAsyncThunk(
         let url = `${process.env.REACT_APP_BASE_URL}/api/v1/home/${productId}`;
 
         try {
-            const resp = await axios.get(url);
+            const { isAuthenticated } = thunkAPI.getState().user;
+            let resp;
+            if (isAuthenticated) {
+                const { accessToken } = thunkAPI.getState().user;
+                resp = await axios.get(url, {
+                    headers: {
+                        Authorization: "Bearer " + accessToken,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+            } else {
+                resp = await axios.get(url);
+            }
 
             const { data } = resp.data;
-            // console.log(data);
+            console.log(resp);
+
+            if (resp.data.message === "Waiting")
+                data.negotiationStatus = "Waiting";
 
             return data;
         } catch (error) {
@@ -144,12 +160,47 @@ export const publishProduct = createAsyncThunk(
         }
     }
 );
+export const deleteProduct = createAsyncThunk(
+    "/api/v1/products/delete/product_id",
+    async (productId, thunkAPI) => {
+        const { accessToken } = thunkAPI.getState().user;
+        let url = `${process.env.REACT_APP_BASE_URL}/api/v1/products/delete/${productId}`;
+
+        try {
+            const resp = await axios.delete(url, {
+                headers: {
+                    Authorization: "Bearer " + accessToken,
+                },
+            });
+
+            const { data } = resp;
+            console.log(data);
+
+            return data;
+        } catch (error) {
+            const message =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            toast.dismiss();
+            toast.error(message);
+            return thunkAPI.rejectWithValue();
+        }
+    }
+);
 
 const transactionProductSlice = createSlice({
     name: "transactionProduct",
     initialState,
     reducers: {},
     extraReducers: {
+        [postNegoPrice.pending]: (state) => {},
+        [postNegoPrice.fulfilled]: (state, { payload }) => {
+            state.negotiationStatus = "Waiting";
+        },
+        [postNegoPrice.rejected]: (state, action) => {},
         [getProductDetails.pending]: (state) => {
             state.isLoadingDetailProduct = true;
         },
@@ -167,8 +218,9 @@ const transactionProductSlice = createSlice({
                 productImages,
                 sold,
                 published,
+                negotiationStatus,
             } = payload;
-            
+
             state.productId = productId;
             state.productName = productName;
             state.description = description;
@@ -182,6 +234,7 @@ const transactionProductSlice = createSlice({
             state.sold = sold;
             state.published = published;
             state.isLoadingDetailProduct = false;
+            state.negotiationStatus = negotiationStatus;
         },
         [getProductDetails.rejected]: (state, action) => {
             state.isLoadingDetailProduct = false;
