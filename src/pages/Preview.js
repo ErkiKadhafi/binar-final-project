@@ -87,7 +87,7 @@ const Preview = () => {
         formData.append("price", price);
         formData.append("productName", productName);
 
-        [...Array(realProductImages)].forEach((item, index) => {
+        [...Array(realProductImages.length)].forEach((item, index) => {
             formData.append("images", realProductImages[index]);
         });
         if (productId !== -1) {
