@@ -16,8 +16,20 @@ export const getAllProducts = createAsyncThunk(
         let url = `${process.env.REACT_APP_BASE_URL}/api/v1/home${queryString}`;
 
         try {
-            const resp = await axios.get(url);
+            const { isAuthenticated } = thunkAPI.getState().user;
+            let resp;
 
+            if (isAuthenticated) {
+                const { accessToken } = thunkAPI.getState().user;
+                resp = await axios.get(url, {
+                    headers: {
+                        Authorization: "Bearer " + accessToken,
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
+            } else {
+                resp = await axios.get(url);
+            }
             const data = resp.data;
             // console.log(data);
 
@@ -80,7 +92,7 @@ export const updateProduct = createAsyncThunk(
         // }
 
         const url = `${process.env.REACT_APP_BASE_URL}/api/v1/products/update`;
- 
+
         try {
             const resp = await axios.put(url, payload, {
                 headers: {
