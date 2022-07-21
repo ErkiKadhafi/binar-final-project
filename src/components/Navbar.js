@@ -171,7 +171,7 @@ function Navbar({
     const { notifications, isLoadingNotification, hasNewNotification } =
         useSelector((state) => state.notification);
     useEffect(() => {
-        dispatch(getNotification());
+        if (isAuthenticated) dispatch(getNotification());
     }, [location]);
     const handleReadNotification = (notifId) => {
         dispatch(readNotification({ notifId }));

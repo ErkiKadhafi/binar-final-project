@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addProduct, updateProduct } from "../features/product/productSlice";
 import { getProductDetails } from "../features/product/transactionProductSlice";
+import { setPreviewProduct } from "../features/product/previewSlice";
 
 const categories = [
     { value: 1, key: "Hobi" },
@@ -169,6 +170,36 @@ const AddProduct = () => {
                 });
         }
     }, []);
+
+    /* ======== handle preview ======== */
+    const { fullName, imageUrl, address } = useSelector((state) => state.user);
+    const handlePreview = () => {
+        const { productName, price, categoryId, description, images } =
+            formik.values;
+        if (
+            productName === "" ||
+            price === "" ||
+            description === "" ||
+            images === ""
+        )
+            toast.error("Tolong lengkapi semua data");
+        else {
+            const previewProduct = {
+                productId: location.pathname.includes("edit_product") ? id : -1,
+                productName,
+                price,
+                categoryId,
+                description,
+                productImages: previewProductImages,
+                realProductImages: images,
+                userName: fullName,
+                photoProfile: imageUrl,
+                city: address.city,
+            };
+            dispatch(setPreviewProduct(previewProduct));
+            navigate("/preview");
+        }
+    };
 
     return (
         <>
@@ -333,7 +364,12 @@ const AddProduct = () => {
                             )}
                         </fieldset>
                         <div className="flex flex-row items-start mt-6 gap-4">
-                            <Button className="w-64" variant="secondary">
+                            <Button
+                                type="button"
+                                onClick={handlePreview}
+                                className="w-64"
+                                variant="secondary"
+                            >
                                 Preview
                             </Button>
                             <Button type="submit" className="w-64 ">

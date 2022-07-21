@@ -104,7 +104,7 @@ export const getProductDetails = createAsyncThunk(
             }
 
             const { data } = resp.data;
-            console.log(resp);
+            // console.log(resp);
 
             if (resp.data.message === "Waiting")
                 data.negotiationStatus = "Waiting";
