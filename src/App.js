@@ -11,6 +11,7 @@ import SellerInfo from "./pages/SellerInfo";
 import { useSelector } from "react-redux";
 import SaleListPage from "./pages/SaleListPage";
 import Notification from "./pages/Notification";
+import Preview from "./pages/Preview";
 
 function App() {
     const { isAuthenticated, address, phoneNumber } = useSelector(
@@ -120,6 +121,16 @@ function App() {
                         <ContentRoute>
                             <ContentRouteProtected>
                                 <Notification />
+                            </ContentRouteProtected>
+                        </ContentRoute>
+                    }
+                ></Route>
+                <Route
+                    path="/preview"
+                    element={
+                        <ContentRoute>
+                            <ContentRouteProtected>
+                                <Preview />
                             </ContentRouteProtected>
                         </ContentRoute>
                     }
