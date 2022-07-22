@@ -48,7 +48,7 @@ export const readNotification = createAsyncThunk(
         const url = `${process.env.REACT_APP_BASE_URL}/api/v1/notification/read/${payload.notifId}`;
 
         try {
-            const resp = await axios.post(url, payload, {
+            const resp = await axios.put(url, payload, {
                 headers: {
                     Authorization: "Bearer " + accessToken,
                     "Content-Type": "multipart/form-data",
